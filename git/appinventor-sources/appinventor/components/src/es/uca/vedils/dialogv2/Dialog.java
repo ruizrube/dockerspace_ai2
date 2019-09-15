@@ -1,5 +1,8 @@
 package es.uca.vedils.dialogv2;
 
+import android.annotation.SuppressLint;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import com.google.appinventor.components.annotations.DesignerComponent;
 import com.google.appinventor.components.annotations.DesignerProperty;
 import com.google.appinventor.components.annotations.PropertyCategory;
@@ -236,6 +239,8 @@ public class Dialog extends AndroidNonvisibleComponent implements Component {
 		EventDispatcher.dispatchEvent(this, "OnFinishListening",response);
 
 	}
+
+
 
 	public class RequestTask extends AsyncTask<Void, Void, DetectIntentResponse> {
 

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="appinventor-sources">
+        <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/appinventor/aimerger_for_appinv_classic/src"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/appinventor/aimerger/src"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/appinventor/appengine/src"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/appinventor/appengine/tests"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/appinventor/blocklyeditor/tests"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/appinventor/buildserver/src"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/appinventor/buildserver/tests"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/appinventor/common/src"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/appinventor/common/tests"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/appinventor/components/src"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/appinventor/components/tests"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/appinventor/misc/companionextras-extension"/>
+        <property name="context-root" value="appinventor-sources"/>
+        <property name="java-output-path" value="/appinventor-sources/bin"/>
+    </wb-module>
+</project-modules>

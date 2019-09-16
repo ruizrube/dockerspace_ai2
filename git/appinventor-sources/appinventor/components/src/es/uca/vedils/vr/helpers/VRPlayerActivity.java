@@ -76,6 +76,19 @@ public class VRPlayerActivity extends Activity {
 		}
 
 	};
+    public BroadcastReceiver setVolumeBroadCastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            int volume=intent.getExtras().getInt("volume");
+
+                mVrVideoView.setVolume(volume);
+
+
+
+        }
+
+    };
 	public BroadcastReceiver closeVideoPlayerBroadCastReceiver = new BroadcastReceiver() {
         public void onReceive(final Context context, final Intent intent) {
             VRPlayerActivity.this.finish();
@@ -107,6 +120,7 @@ public class VRPlayerActivity extends Activity {
         LocalBroadcastManager.getInstance((Context)this).registerReceiver(this.playVideoBroadCastReceiver, new IntentFilter("es.uca.vedils.vr.helpers.VRActivity.playVideoPlayer"));
         LocalBroadcastManager.getInstance((Context)this).registerReceiver(this.seektoVideoBroadCastReceiver, new IntentFilter("es.uca.vedils.vr.helpers.VRActivity.seektoVideoPlayer"));
         LocalBroadcastManager.getInstance((Context)this).registerReceiver(this.closeVideoPlayerBroadCastReceiver, new IntentFilter("es.uca.vedils.vr.helpers.VRActivity.closeVideoPlayer"));
+        LocalBroadcastManager.getInstance((Context)this).registerReceiver(this.setVolumeBroadCastReceiver, new IntentFilter("es.uca.vedils.vr.helpers.VRActivity.setVolumeVideoPlayer"));
 
         registersActive=true;
     }
@@ -116,6 +130,7 @@ public class VRPlayerActivity extends Activity {
          LocalBroadcastManager.getInstance((Context)this).unregisterReceiver(this.playVideoBroadCastReceiver);
          LocalBroadcastManager.getInstance((Context)this).unregisterReceiver(this.seektoVideoBroadCastReceiver);
          LocalBroadcastManager.getInstance((Context)this).unregisterReceiver(this.closeVideoPlayerBroadCastReceiver);
+        LocalBroadcastManager.getInstance((Context)this).unregisterReceiver(this.setVolumeBroadCastReceiver);
 
          registersActive=false;
     	
@@ -131,7 +146,8 @@ public class VRPlayerActivity extends Activity {
         //creamos los componentes que iran dentro del layout
         mVrVideoView= new VrVideoView(this);
         mVrVideoView.setDisplayMode(3);
-       
+
+
 
         //añadimos los componentes dentro del layout
         layout.addView(mVrVideoView);

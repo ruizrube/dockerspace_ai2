@@ -1690,19 +1690,8 @@ private static final String VRPLAYER_ACTIVITY_CLASS = "es.uca.vedils.vr.helpers.
           LOG.info("CLASSESLIST: CLAVE:"+key+" TAMAÑO: "+classesList.get(key).size());
       }
   }
-//  private List<File> getClassList(int classesListNumber, Multimap<Integer,File> classesList ) {
-//      List<File> classListTemp = new ArrayList<File>();
-//      Iterator it = classesList.keySet().iterator();
-//      while (it.hasNext()) {
-//          Integer key = (Integer) it.next();
-//          if (key == classesListNumber) {
-//              classListTemp.addAll(classesList.get(key));
-//          }
-//
-//
-//      }
-//      return classListTemp;
-//  }
+
+
   private boolean runDx(File classesDir, String dexedClassesDir, boolean secondTry) {
 
     Map<Integer,List<File>> classesList= new TreeMap<>();
@@ -1752,8 +1741,12 @@ private static final String VRPLAYER_ACTIVITY_CLASS = "es.uca.vedils.vr.helpers.
        for (File aFile : libList) {
          System.err.println(" libList => " + aFile.getAbsolutePath());
        }
-      
-///////////////////////////////////////
+
+    /**
+     * Clasifica las librerias en  listas que tiene cada una un maximo de 2MB.
+     * La indexacion falla cuando se superan las 65k lineas de codigo, por eso
+     * se ha hecho una relacion de a mayor tamaño de archivo, mas lineas de codigo
+     */
       int bytesMega=2000000;
       int classesListNumber=2;
       
@@ -1782,7 +1775,6 @@ private static final String VRPLAYER_ACTIVITY_CLASS = "es.uca.vedils.vr.helpers.
 
           }
       }
-/////////////////////////////////////////////
 
       LOG.info("inputList: "+inputList.size());
       LOG.info("VUELTAS: "+vueltas);
@@ -1810,28 +1802,10 @@ private static final String VRPLAYER_ACTIVITY_CLASS = "es.uca.vedils.vr.helpers.
           if (dxSuccess && (classesList.size()>0)){
               LOG.info("INFO: entrado");
               setProgress(60);
-              
-             
-//              Iterator it = classesList.keySet().iterator();
-//              while (it.hasNext()) {
-//                  Integer key = (Integer) it.next();
-//                  
-//                     
-//                      LOG.info("CLASSLISTEMP: "+classesList.get(key));
-//                      if(classesList.get(key).size()>0) {
-//                      dexTask.setOutput(dexedClassesDir + File.separator + "classes" + key + ".dex");
-//                      dxSuccess = dexTask.execute(classesList.get(key));
-//                      inputList = new ArrayList<File>();
-//                      
-//                      hasNumber=key;
-//                      
-//                      LOG.info("HASNUMBER: "+hasNumber);
-//                      }
-//                  
-//                  
-//
-//              }
-              
+
+            /**
+             * Recorre el Map donde estan todas las colecciones de librerias y las va indexando
+             */
               for (int i = 2; i <classesList.size()+2 ; i++) {
                 
                 dexTask.setOutput(dexedClassesDir + File.separator + "classes" + i + ".dex");

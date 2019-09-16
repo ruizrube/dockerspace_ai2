@@ -141,6 +141,13 @@ public class VRPlayer extends AndroidNonvisibleComponent implements Component, A
 		registerReceivers();
 		container.$context().startActivityForResult(intent,0);
 	}
+	@SimpleFunction(description = "Volume VRPlayer")
+	public void setVolumeVRPlayer(int volume)
+	{
+		Intent volumeIntent = new Intent("es.uca.vedils.vr.helpers.VRActivity.setVolumeVideoPlayer");
+		volumeIntent.putExtra("volume", volume);
+		LocalBroadcastManager.getInstance(container.$context()).sendBroadcast(volumeIntent);
+	}
 	public void registerReceivers() 
 	{
 		LocalBroadcastManager.getInstance(container.$form()).registerReceiver(onClickEventBroadCastReceiver,

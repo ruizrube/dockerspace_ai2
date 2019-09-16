@@ -88,7 +88,7 @@ public class Dialog extends AndroidNonvisibleComponent implements Component {
 	 *                 code to set this SpeechRecognizer component to.
 	 */
 	@DesignerProperty(editorType = PropertyTypeConstants.PROPERTY_TYPE_TEXT_TO_SPEECH_LANGUAGES, defaultValue = Component.DEFAULT_VALUE_TEXT_TO_SPEECH_LANGUAGE)
-	@SimpleProperty(category = PropertyCategory.BEHAVIOR, description = "Sets the language for Dialogflow.")
+	@SimpleProperty(category = PropertyCategory.BEHAVIOR, description = "Set the language for Dialogflow.")
 	public void Language(final String language) {
 		
 		Locale locale;
@@ -147,13 +147,15 @@ public class Dialog extends AndroidNonvisibleComponent implements Component {
 
 	{
 
-
 		mSpeechManager = new SpeechRecognizerManager(container.$form(), new SpeechRecognizerManager.onResultsReady() {
 			@Override
 			public void onResults(ArrayList<String> results) {
 
-				OnFinishListening(results.get(0).toString());
 				mSpeechManager.destroy();
+				OnFinishListening(results.get(0).toString());
+
+
+
 
 			}
 		});
@@ -178,7 +180,6 @@ public class Dialog extends AndroidNonvisibleComponent implements Component {
 
 	@SimpleFunction
 	public void InitSession(String path) {
-
 
 		try {
 

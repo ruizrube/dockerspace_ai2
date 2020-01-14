@@ -6,19 +6,12 @@
 
 package es.uca.vedils.vr;
 
-import java.io.FileInputStream;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import com.google.appinventor.components.annotations.DesignerComponent;
 import com.google.appinventor.components.annotations.DesignerProperty;
-import com.google.appinventor.components.annotations.PropertyCategory;
 import com.google.appinventor.components.annotations.SimpleEvent;
 import com.google.appinventor.components.annotations.SimpleFunction;
 import com.google.appinventor.components.annotations.SimpleObject;
@@ -37,23 +30,13 @@ import com.google.appinventor.components.runtime.AndroidNonvisibleComponent;
 import com.google.appinventor.components.runtime.Component;
 import com.google.appinventor.components.runtime.ComponentContainer;
 import com.google.appinventor.components.runtime.EventDispatcher;
-import com.google.appinventor.components.runtime.OnDestroyListener;
-import com.google.appinventor.components.runtime.OnPauseListener;
-import com.google.appinventor.components.runtime.OnResumeListener;
-import com.google.appinventor.components.runtime.OnStopListener;
-import com.google.appinventor.components.runtime.util.OnInitializeListener;
 
-import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.util.SparseArray;
-import at.huber.youtubeExtractor.VideoMeta;
-import at.huber.youtubeExtractor.YouTubeExtractor;
-import at.huber.youtubeExtractor.YtFile;
 import es.uca.vedils.vr.helpers.VRPlayerActivity;
 
 
@@ -64,7 +47,7 @@ import es.uca.vedils.vr.helpers.VRPlayerActivity;
  *
  */
 
-@UsesLibraries(libraries = "youtube.jar,libprotobuf-java-2.3-nano.jar")
+@UsesLibraries(libraries = "rhino-1.7R4.jar,libprotobuf-java-2.3-nano.jar,gson-2.7.jar")
 @UsesNativeLibraries(v8aLibraries = "libpano_video_renderer.so" ,
 v7aLibraries = "libpano_video_renderer.so",
 x86_64Libraries="libpano_video_renderer.so")
@@ -89,7 +72,7 @@ public class VRPlayer extends AndroidNonvisibleComponent implements Component, A
 	public String resultado="";
 	public VRPlayerActivity hola;
 	
-	private String youtubeURL = "";
+	private String youtubeVideoID = "";
 	
 	public BroadcastReceiver onClickEventBroadCastReceiver = new BroadcastReceiver() {
 		@Override
@@ -100,6 +83,7 @@ public class VRPlayer extends AndroidNonvisibleComponent implements Component, A
 
 	};
 	public BroadcastReceiver onNewFrameEventBroadCastReceiver = new BroadcastReceiver() {
+		@RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			
@@ -137,7 +121,7 @@ public class VRPlayer extends AndroidNonvisibleComponent implements Component, A
 	public void openVRPlayer() 
 	{
 		Intent intent = new Intent(container.$context(), VRPlayerActivity.class);
-		intent.putExtra("mYoutubeLink", youtubeURL);
+		intent.putExtra("mYoutubeVideoID", youtubeVideoID);
 		registerReceivers();
 		container.$context().startActivityForResult(intent,0);
 	}
@@ -161,14 +145,14 @@ public class VRPlayer extends AndroidNonvisibleComponent implements Component, A
 		LocalBroadcastManager.getInstance(container.$form()).unregisterReceiver(onNewFrameEventBroadCastReceiver);
 	}
 	@SimpleProperty
-	public String YoutubeURL() {
-		    return youtubeURL;
+	public String YoutubeVideoID() {
+		    return youtubeVideoID;
 		    
 		  }
 	 @DesignerProperty(editorType = PropertyTypeConstants.PROPERTY_TYPE_TEXT, defaultValue = "")
 	 @SimpleProperty
-	  public void YoutubeURL(String url) {
-	    this.youtubeURL=url;
+	  public void YoutubeVideoID(String url) {
+	    this.youtubeVideoID =url;
 	  }
 	 @SimpleFunction
 	 public void pause() 

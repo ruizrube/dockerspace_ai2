@@ -5,25 +5,26 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
-import android.util.SparseArray;
+
 
 
 import java.io.IOException;
+import java.util.List;
 
 import com.google.vr.sdk.widgets.video.VrVideoEventListener;
 import com.google.vr.sdk.widgets.video.VrVideoView;
-import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.SeekBar;
 import android.widget.Toast;
-import at.huber.youtubeExtractor.VideoMeta;
-import at.huber.youtubeExtractor.YouTubeExtractor;
-import at.huber.youtubeExtractor.YtFile;
-import android.annotation.SuppressLint;
+
 import android.net.Uri;
+import es.uca.vedils.vr.model.YTMedia;
+import es.uca.vedils.vr.model.YoutubeMeta;
+import es.uca.vedils.vr.youtube.ExtractorException;
+import es.uca.vedils.vr.youtube.YoutubeStreamExtractor;
 
 public class VRPlayerActivity extends Activity {
 
@@ -34,13 +35,8 @@ public class VRPlayerActivity extends Activity {
     private static final String STATE_DURATION = "state_duration";
 
     private VrVideoView mVrVideoView;
-    
-    
     private boolean registersActive=false;
-
-    private String YOUTUBE_VIDEO_ID = "dpDNZF6obL8";
-    private String BASE_URL = "https://www.youtube.com";
-    private String mYoutubeLink = BASE_URL + "/watch?v=" + YOUTUBE_VIDEO_ID;
+    private String mYoutubeVideoID = "";
     
     
     public BroadcastReceiver pauseVideoBroadCastReceiver = new BroadcastReceiver() {
@@ -95,6 +91,7 @@ public class VRPlayerActivity extends Activity {
         }
     };
 
+    @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,7 +108,7 @@ public class VRPlayerActivity extends Activity {
     public void getExtraIntent() {
      
      this.extras = this.getIntent().getExtras();
-     this.mYoutubeLink = this.extras.getString("mYoutubeLink");
+     this.mYoutubeVideoID = this.extras.getString("mYoutubeVideoID");
 
     }
     private void registerReceivers() 
@@ -263,18 +260,43 @@ public class VRPlayerActivity extends Activity {
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
     private void extractYoutubeUrl() {
-        @SuppressLint("StaticFieldLeak") YouTubeExtractor mExtractor = new YouTubeExtractor(this) {
-            @Override
-            protected void onExtractionComplete(SparseArray<YtFile> sparseArray, VideoMeta videoMeta) {
-                if (sparseArray != null) {
-                    Log.e("YOUTUBE", "playVideo:  "+sparseArray);
+        new YoutubeStreamExtractor(new YoutubeStreamExtractor.ExtractorListner(){
 
-                    initVideo(sparseArray.get(22).getUrl());
+            @Override
+            public void onExtractionDone(List<YTMedia> adativeStream, final List<YTMedia> muxedStream, YoutubeMeta meta) {
+
+
+                if (adativeStream.isEmpty()) {
+
+                    return;
                 }
+                if (muxedStream.isEmpty()) {
+
+                    return;
+                }
+                String url="";
+                try {
+                    url= muxedStream.get(1).getUrl();
+                }catch(Exception e)
+                {
+                    url= muxedStream.get(0).getUrl();
+                }
+                initVideo(url);
+
+
             }
-        };
-        mExtractor.extract(mYoutubeLink, true, true);
+
+
+            @Override
+            public void onExtractionGoesWrong(final ExtractorException e) {
+
+                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+
+
+            }
+        }).useDefaultLogin().Extract("https://youtu.be/"+mYoutubeVideoID);
     }
 
     private void initVideo(String url) {

@@ -115,55 +115,55 @@ public final class Compiler {
    * To get the real file paths, call getResource() with one of these constants.
    */
   private static final String ACRA_RUNTIME =
-      RUNTIME_FILES_DIR + "acra-4.4.0.jar";
+          RUNTIME_FILES_DIR + "acra-4.4.0.jar";
   private static final String ANDROID_RUNTIME =
-      RUNTIME_FILES_DIR + "android.jar";
+          RUNTIME_FILES_DIR + "android.jar";
   private static final String[] SUPPORT_JARS;
   private static final String[] SUPPORT_AARS;
   private static final String COMP_BUILD_INFO =
-      RUNTIME_FILES_DIR + "simple_components_build_info.json";
+          RUNTIME_FILES_DIR + "simple_components_build_info.json";
   private static final String DX_JAR =
-      RUNTIME_FILES_DIR + "dx.jar";
+          RUNTIME_FILES_DIR + "dx.jar";
   private static final String KAWA_RUNTIME =
-      RUNTIME_FILES_DIR + "kawa.jar";
+          RUNTIME_FILES_DIR + "kawa.jar";
   private static final String SIMPLE_ANDROID_RUNTIME_JAR =
-      RUNTIME_FILES_DIR + "AndroidRuntime.jar";
+          RUNTIME_FILES_DIR + "AndroidRuntime.jar";
   private static final String APKSIGNER_JAR =
-      RUNTIME_FILES_DIR + "apksigner.jar";
+          RUNTIME_FILES_DIR + "apksigner.jar";
 
   private static final String LINUX_AAPT_TOOL =
-      "/tools/linux/aapt";
+          "/tools/linux/aapt";
   private static final String LINUX_ZIPALIGN_TOOL =
-      "/tools/linux/zipalign";
+          "/tools/linux/zipalign";
   private static final String MAC_AAPT_TOOL =
-      "/tools/mac/aapt";
+          "/tools/mac/aapt";
   private static final String MAC_ZIPALIGN_TOOL =
-      "/tools/mac/zipalign";
+          "/tools/mac/zipalign";
   private static final String WINDOWS_AAPT_TOOL =
-      "/tools/windows/aapt";
+          "/tools/windows/aapt";
   private static final String WINDOWS_ZIPALIGN_TOOL =
-      "/tools/windows/zipalign";
+          "/tools/windows/zipalign";
 
   @VisibleForTesting
   static final String YAIL_RUNTIME = RUNTIME_FILES_DIR + "runtime.scm";
 
   private final ConcurrentMap<String, Set<String>> assetsNeeded =
-      new ConcurrentHashMap<String, Set<String>>();
+          new ConcurrentHashMap<String, Set<String>>();
   private final ConcurrentMap<String, Set<String>> activitiesNeeded =
-      new ConcurrentHashMap<String, Set<String>>();
+          new ConcurrentHashMap<String, Set<String>>();
   private final ConcurrentMap<String, Set<String>> broadcastReceiversNeeded =
-      new ConcurrentHashMap<String, Set<String>>();
+          new ConcurrentHashMap<String, Set<String>>();
   private final ConcurrentMap<String, Set<String>> libsNeeded =
-      new ConcurrentHashMap<String, Set<String>>();
+          new ConcurrentHashMap<String, Set<String>>();
   private final ConcurrentMap<String, Set<String>> nativeLibsNeeded =
-      new ConcurrentHashMap<String, Set<String>>();
+          new ConcurrentHashMap<String, Set<String>>();
   private final ConcurrentMap<String, Set<String>> permissionsNeeded =
-      new ConcurrentHashMap<String, Set<String>>();
+          new ConcurrentHashMap<String, Set<String>>();
   private final ConcurrentMap<String, Set<String>> minSdksNeeded =
-      new ConcurrentHashMap<String, Set<String>>();
+          new ConcurrentHashMap<String, Set<String>>();
   private final Set<String> uniqueLibsNeeded = Sets.newHashSet();
   private final ConcurrentMap<String, Map<String, Map<String, Set<String>>>> conditionals =
-      new ConcurrentHashMap<>();
+          new ConcurrentHashMap<>();
   /**
    * Maps component type names to a set of blocks used in the project from the
    * named component. For example, Hello Purr might produce:
@@ -203,7 +203,7 @@ public final class Compiler {
   //             should remain for the time being because otherwise we'll break
   //             extensions currently using @SimpleBroadcastReceiver.
   private final ConcurrentMap<String, Set<String>> componentBroadcastReceiver =
-      new ConcurrentHashMap<String, Set<String>>();
+          new ConcurrentHashMap<String, Set<String>>();
 
   /**
    * Map used to hold the names and paths of resources that we've written out
@@ -212,18 +212,18 @@ public final class Compiler {
    * constants above to get the (temp file) path to a resource.
    */
   private static final ConcurrentMap<String, File> resources =
-      new ConcurrentHashMap<String, File>();
+          new ConcurrentHashMap<String, File>();
 
   // TODO(user,lizlooney): i18n here and in lines below that call String.format(...)
   private static final String COMPILATION_ERROR =
-      "Error: Your build failed due to an error when compiling %s.\n";
+          "Error: Your build failed due to an error when compiling %s.\n";
   private static final String ERROR_IN_STAGE =
-      "Error: Your build failed due to an error in the %s stage, " +
-      "not because of an error in your program.\n";
+          "Error: Your build failed due to an error in the %s stage, " +
+                  "not because of an error in your program.\n";
   private static final String ICON_ERROR =
-      "Error: Your build failed because %s cannot be used as the application icon.\n";
+          "Error: Your build failed because %s cannot be used as the application icon.\n";
   private static final String NO_USER_CODE_ERROR =
-      "Error: No user code exists.\n";
+          "Error: No user code exists.\n";
 
   static {
     List<String> aars = new ArrayList<>();
@@ -284,7 +284,7 @@ public final class Compiler {
 
   private static final Logger LOG = Logger.getLogger(Compiler.class.getName());
 
-private static final String VRPLAYER_ACTIVITY_CLASS = "es.uca.vedils.vr.helpers.MainActivity2";
+  private static final String VRPLAYER_ACTIVITY_CLASS = "es.uca.vedils.vr.helpers.MainActivity2";
 
   private BuildServer.ProgressReporter reporter; // Used to report progress of the build
 
@@ -627,7 +627,7 @@ private static final String VRPLAYER_ACTIVITY_CLASS = "es.uca.vedils.vr.helpers.
   }
 
   private static void writeActionBarStyle(Writer out, String name, String parent,
-      boolean blackText) throws IOException {
+                                          boolean blackText) throws IOException {
     out.write("<style name=\"");
     out.write(name);
     out.write("\" parent=\"");
@@ -718,7 +718,7 @@ private static final String VRPLAYER_ACTIVITY_CLASS = "es.uca.vedils.vr.helpers.
       out.write("<resources>\n");
 
       writeTheme(out, "AppTheme", parentTheme,
-          suffix.isEmpty() ? 7 : Integer.parseInt(suffix.substring(2)));
+              suffix.isEmpty() ? 7 : Integer.parseInt(suffix.substring(2)));
       if (!isClassicTheme) {
         if (holo) {  // Handle Holo
           if (parentTheme.contains("Light")) {
@@ -809,12 +809,12 @@ private static final String VRPLAYER_ACTIVITY_CLASS = "es.uca.vedils.vr.helpers.
       // See http://developer.android.com/guide/publishing/publishing.html for
       // more info.
       out.write("<manifest " +
-          "xmlns:android=\"http://schemas.android.com/apk/res/android\" " +
-          "package=\"" + packageName + "\" " +
-          // TODO(markf): uncomment the following line when we're ready to enable publishing to the
-          // Android Market.
-          "android:versionCode=\"" + vCode +"\" " + "android:versionName=\"" + vName + "\" " +
-          ">\n");
+              "xmlns:android=\"http://schemas.android.com/apk/res/android\" " +
+              "package=\"" + packageName + "\" " +
+              // TODO(markf): uncomment the following line when we're ready to enable publishing to the
+              // Android Market.
+              "android:versionCode=\"" + vCode +"\" " + "android:versionName=\"" + vName + "\" " +
+              ">\n");
 
       // If we are building the Wireless Debugger (AppInventorDebugger) add the uses-feature tag which
       // is used by the Google Play store to determine which devices the app is available for. By adding
@@ -822,20 +822,20 @@ private static final String VRPLAYER_ACTIVITY_CLASS = "es.uca.vedils.vr.helpers.
       // to make the app available on devices that lack the feature. Without these lines the Play Store
       // makes a guess based on permissions and assumes that they are required features.
       if (isForCompanion) {
-          out.write("  <uses-feature android:name=\"android.hardware.bluetooth\" android:required=\"false\" />\n");
-          out.write("  <uses-feature android:name=\"android.hardware.location\" android:required=\"false\" />\n");
-          out.write("  <uses-feature android:name=\"android.hardware.telephony\" android:required=\"false\" />\n");
-          out.write("  <uses-feature android:name=\"android.hardware.location.network\" android:required=\"false\" />\n");
-          out.write("  <uses-feature android:name=\"android.hardware.location.gps\" android:required=\"false\" />\n");
-          out.write("  <uses-feature android:name=\"android.hardware.microphone\" android:required=\"false\" />\n");
-          out.write("  <uses-feature android:name=\"android.hardware.touchscreen\" android:required=\"false\" />\n");
-          out.write("  <uses-feature android:name=\"android.hardware.camera\" android:required=\"false\" />\n");
-          out.write("  <uses-feature android:name=\"android.hardware.camera.autofocus\" android:required=\"false\" />\n");
-          if (isForEmulator) {
-            out.write("  <uses-feature android:name=\"android.hardware.wifi\" android:required=\"false\" />\n"); // We actually require wifi
-          } else {
-            out.write("  <uses-feature android:name=\"android.hardware.wifi\" />\n"); // We actually require wifi
-          }
+        out.write("  <uses-feature android:name=\"android.hardware.bluetooth\" android:required=\"false\" />\n");
+        out.write("  <uses-feature android:name=\"android.hardware.location\" android:required=\"false\" />\n");
+        out.write("  <uses-feature android:name=\"android.hardware.telephony\" android:required=\"false\" />\n");
+        out.write("  <uses-feature android:name=\"android.hardware.location.network\" android:required=\"false\" />\n");
+        out.write("  <uses-feature android:name=\"android.hardware.location.gps\" android:required=\"false\" />\n");
+        out.write("  <uses-feature android:name=\"android.hardware.microphone\" android:required=\"false\" />\n");
+        out.write("  <uses-feature android:name=\"android.hardware.touchscreen\" android:required=\"false\" />\n");
+        out.write("  <uses-feature android:name=\"android.hardware.camera\" android:required=\"false\" />\n");
+        out.write("  <uses-feature android:name=\"android.hardware.camera.autofocus\" android:required=\"false\" />\n");
+        if (isForEmulator) {
+          out.write("  <uses-feature android:name=\"android.hardware.wifi\" android:required=\"false\" />\n"); // We actually require wifi
+        } else {
+          out.write("  <uses-feature android:name=\"android.hardware.wifi\" />\n"); // We actually require wifi
+        }
       }
 
       int minSdk = Integer.parseInt((project.getMinSdk() == null) ? DEFAULT_MIN_SDK : project.getMinSdk());
@@ -878,7 +878,7 @@ private static final String VRPLAYER_ACTIVITY_CLASS = "es.uca.vedils.vr.helpers.
       // the specified SDK version.  We right now support building for minSDK 4.
       // We might also want to allow users to specify minSdk version or targetSDK version.
       out.write("  <uses-sdk android:minSdkVersion=\"" + minSdk + "\" android:targetSdkVersion=\"" +
-          TARGET_SDK_VERSION + "\" />\n");
+              TARGET_SDK_VERSION + "\" />\n");
 
       out.write("  <application ");
 
@@ -930,7 +930,7 @@ private static final String VRPLAYER_ACTIVITY_CLASS = "es.uca.vedils.vr.helpers.
         // better to do this programmatically when the NearField component is created, rather
         // than here in the manifest.
         if (simpleCompTypes.contains("com.google.appinventor.components.runtime.NearField") &&
-            !isForCompanion && isMain) {
+                !isForCompanion && isMain) {
           out.write("android:launchMode=\"singleTask\" ");
         } else if (isMain && isForCompanion) {
           out.write("android:launchMode=\"singleTop\" ");
@@ -950,7 +950,7 @@ private static final String VRPLAYER_ACTIVITY_CLASS = "es.uca.vedils.vr.helpers.
         out.write("      </intent-filter>\n");
 
         if (simpleCompTypes.contains("com.google.appinventor.components.runtime.NearField") &&
-            !isForCompanion && isMain) {
+                !isForCompanion && isMain) {
           //  make the form respond to NDEF_DISCOVERED
           //  this will trigger the form's onResume method
           //  For now, we're handling text/plain only,but we can add more and make the Nearfield
@@ -963,7 +963,7 @@ private static final String VRPLAYER_ACTIVITY_CLASS = "es.uca.vedils.vr.helpers.
         }
         out.write("    </activity>\n");
 
-       
+
         // Companion display a splash screen... define it's activity here
         if (isMain && isForCompanion) {
           out.write("    <activity android:name=\"com.google.appinventor.components.runtime.SplashActivity\" android:screenOrientation=\"behind\" android:configChanges=\"keyboardHidden|orientation\">\n");
@@ -987,7 +987,7 @@ private static final String VRPLAYER_ACTIVITY_CLASS = "es.uca.vedils.vr.helpers.
           Set<String> subelementSet = componentSubElSetPair.getValue();
           for (String subelement : subelementSet) {
             if (isForCompanion && !includeDangerousPermissions &&
-                subelement.contains("android.provider.Telephony.SMS_RECEIVED")) {
+                    subelement.contains("android.provider.Telephony.SMS_RECEIVED")) {
               continue;
             }
             out.write(subelement);
@@ -1024,7 +1024,7 @@ private static final String VRPLAYER_ACTIVITY_CLASS = "es.uca.vedils.vr.helpers.
           if (skip) continue;
         }
         out.write(
-            "<receiver android:name=\"" + brNameAndActions[0] + "\" >\n");
+                "<receiver android:name=\"" + brNameAndActions[0] + "\" >\n");
         if (brNameAndActions.length > 1){
           out.write("  <intent-filter>\n");
           for (int i = 1; i < brNameAndActions.length; i++) {
@@ -1085,8 +1085,8 @@ private static final String VRPLAYER_ACTIVITY_CLASS = "es.uca.vedils.vr.helpers.
 
     // Create a new compiler instance for the compilation
     Compiler compiler = new Compiler(project, compTypes, compBlocks, out, err, userErrors,
-        isForCompanion, isForEmulator, includeDangerousPermissions, childProcessRam, dexCacheDir,
-        reporter);
+            isForCompanion, isForEmulator, includeDangerousPermissions, childProcessRam, dexCacheDir,
+            reporter);
 
     compiler.generateAssets();
     compiler.generateActivities();
@@ -1131,10 +1131,10 @@ private static final String VRPLAYER_ACTIVITY_CLASS = "es.uca.vedils.vr.helpers.
     File style21Dir = createDir(resDir, "values-v21");
     File style23Dir = createDir(resDir, "values-v23");
     if (!compiler.createValuesXml(styleDir, "") ||
-        !compiler.createValuesXml(style11Dir, "-v11") ||
-        !compiler.createValuesXml(style14Dir, "-v14") ||
-        !compiler.createValuesXml(style21Dir, "-v21") ||
-        !compiler.createValuesXml(style23Dir, "-v23")) {
+            !compiler.createValuesXml(style11Dir, "-v11") ||
+            !compiler.createValuesXml(style14Dir, "-v14") ||
+            !compiler.createValuesXml(style21Dir, "-v21") ||
+            !compiler.createValuesXml(style23Dir, "-v23")) {
       return false;
     }
 
@@ -1181,7 +1181,7 @@ private static final String VRPLAYER_ACTIVITY_CLASS = "es.uca.vedils.vr.helpers.
     out.println("________Invoking AAPT");
     File deployDir = createDir(buildDir, "deploy");
     String tmpPackageName = deployDir.getAbsolutePath() + SLASH +
-        project.getProjectName() + ".ap_";
+            project.getProjectName() + ".ap_";
     File srcJavaDir = createDir(buildDir, "generated/src");
     File rJavaDir = createDir(buildDir, "generated/symbols");
     if (!compiler.runAaptPackage(manifestFile, resDir, tmpPackageName, srcJavaDir, rJavaDir)) {
@@ -1261,7 +1261,7 @@ private static final String VRPLAYER_ACTIVITY_CLASS = "es.uca.vedils.vr.helpers.
     }
 
     out.println("Build finished in " +
-        ((System.currentTimeMillis() - start) / 1000.0) + " seconds");
+            ((System.currentTimeMillis() - start) / 1000.0) + " seconds");
 
     return true;
   }
@@ -1319,32 +1319,33 @@ private static final String VRPLAYER_ACTIVITY_CLASS = "es.uca.vedils.vr.helpers.
    * can call System.exit(1), which will bring down our server.
    */
   private boolean runApkBuilder(String apkAbsolutePath, String zipArchive, String dexedClassesDir) {
-      try {
-          ApkBuilder apkBuilder =
-                  new ApkBuilder(apkAbsolutePath, zipArchive,
-                          dexedClassesDir + File.separator + "classes.dex", null, System.out);
+    try {
 
-          for (int i = 2; i <= hasNumber; i++)
-          {
-            LOG.info("ITERACION: "+i);
-            LOG.info("HASNUMBER: "+hasNumber);
-              apkBuilder.addFile(new File(dexedClassesDir + File.separator + "classes"+i+".dex"),
-                      "classes"+i+".dex");
-          }
+      ApkBuilder apkBuilder =
+              new ApkBuilder(apkAbsolutePath, zipArchive,
+                      dexedClassesDir + File.separator + "classes.dex", null, System.out);
 
-          if (nativeLibsNeeded.size() != 0) { // Need to add native libraries...
-              apkBuilder.addNativeLibraries(libsDir);
-          }
-          apkBuilder.sealApk();
-          return true;
-      } catch (Exception e) {
-          // This is fatal.
-          e.printStackTrace();
-          LOG.warning("YAIL compiler - ApkBuilder failed.");
-          err.println("YAIL compiler - ApkBuilder failed.");
-          userErrors.print(String.format(ERROR_IN_STAGE, "ApkBuilder"));
-          return false;
+      for (int i = 2; i <=hasNumber; i++)
+      {
+        LOG.info("ITERACION: "+i);
+        LOG.info("HASNUMBER: "+hasNumber);
+        apkBuilder.addFile(new File(dexedClassesDir + File.separator + "classes"+i+".dex"),
+                "classes"+i+".dex");
       }
+
+      if (nativeLibsNeeded.size() != 0) { // Need to add native libraries...
+        apkBuilder.addNativeLibraries(libsDir);
+      }
+      apkBuilder.sealApk();
+      return true;
+    } catch (Exception e) {
+      // This is fatal.
+      e.printStackTrace();
+      LOG.warning("YAIL compiler - ApkBuilder failed.");
+      err.println("YAIL compiler - ApkBuilder failed.");
+      userErrors.print(String.format(ERROR_IN_STAGE, "ApkBuilder"));
+      return false;
+    }
   }
 
   /**
@@ -1401,7 +1402,7 @@ private static final String VRPLAYER_ACTIVITY_CLASS = "es.uca.vedils.vr.helpers.
         int srcIndex = sourceFileName.indexOf(File.separator + ".." + File.separator + "src" + File.separator);
         String sourceFileRelativePath = sourceFileName.substring(srcIndex + 8);
         String classFileName = (classesDir.getAbsolutePath() + "/" + sourceFileRelativePath)
-          .replace(YoungAndroidConstants.YAIL_EXTENSION, ".class");
+                .replace(YoungAndroidConstants.YAIL_EXTENSION, ".class");
 
         // Check whether user code exists by seeing if a left parenthesis exists at the beginning of
         // a line in the file
@@ -1497,15 +1498,15 @@ private static final String VRPLAYER_ACTIVITY_CLASS = "es.uca.vedils.vr.helpers.
       List<String> kawaCommandArgs = Lists.newArrayList();
       int mx = childProcessRamMb - 200;
       Collections.addAll(kawaCommandArgs,
-          System.getProperty("java.home") + "/bin/java",
-          "-Dfile.encoding=UTF-8",
-          "-mx" + mx + "M",
-          "-cp", classpath.toString(),
-          "kawa.repl",
-          "-f", yailRuntime,
-          "-d", classesDir.getAbsolutePath(),
-          "-P", Signatures.getPackageName(project.getMainClass()) + ".",
-          "-C");
+              System.getProperty("java.home") + "/bin/java",
+              "-Dfile.encoding=UTF-8",
+              "-mx" + mx + "M",
+              "-cp", classpath.toString(),
+              "kawa.repl",
+              "-f", yailRuntime,
+              "-d", classesDir.getAbsolutePath(),
+              "-P", Signatures.getPackageName(project.getMainClass()) + ".",
+              "-C");
       // TODO(lizlooney) - we are currently using (and have always used) absolute paths for the
       // source file names. The resulting .class files contain references to the source file names,
       // including the name of the tmp directory that contains them. We may be able to avoid that
@@ -1523,7 +1524,7 @@ private static final String VRPLAYER_ACTIVITY_CLASS = "es.uca.vedils.vr.helpers.
       boolean kawaSuccess;
       synchronized (SYNC_KAWA_OR_DX) {
         kawaSuccess = Execution.execute(null, kawaCommandLine,
-            System.out, new PrintStream(kawaOutputStream));
+                System.out, new PrintStream(kawaOutputStream));
       }
       if (!kawaSuccess) {
         LOG.log(Level.SEVERE, "Kawa compile has failed.");
@@ -1531,7 +1532,7 @@ private static final String VRPLAYER_ACTIVITY_CLASS = "es.uca.vedils.vr.helpers.
       String kawaOutput = kawaOutputStream.toString();
       out.print(kawaOutput);
       String kawaCompileTimeMessage = "Kawa compile time: " +
-          ((System.currentTimeMillis() - start) / 1000.0) + " seconds";
+              ((System.currentTimeMillis() - start) / 1000.0) + " seconds";
       out.println(kawaCompileTimeMessage);
       LOG.info(kawaCompileTimeMessage);
 
@@ -1542,7 +1543,7 @@ private static final String VRPLAYER_ACTIVITY_CLASS = "es.uca.vedils.vr.helpers.
         if (!classFile.exists()) {
           LOG.log(Level.INFO, "Can't find class file: " + classFileName);
           String screenName = classFileName.substring(classFileName.lastIndexOf('/') + 1,
-              classFileName.lastIndexOf('.'));
+                  classFileName.lastIndexOf('.'));
           userErrors.print(String.format(COMPILATION_ERROR, screenName));
           return false;
         }
@@ -1578,11 +1579,11 @@ private static final String VRPLAYER_ACTIVITY_CLASS = "es.uca.vedils.vr.helpers.
     String zipAlignedPath = tmpDir.getAbsolutePath() + SLASH + "zipaligned.apk";
     // zipalign -f 4 infile.zip outfile.zip
     String[] zipAlignCommandLine = {
-        getResource(zipAlignTool),
-        "-f",
-        "4",
-        apkAbsolutePath,
-        zipAlignedPath
+            getResource(zipAlignTool),
+            "-f",
+            "4",
+            apkAbsolutePath,
+            zipAlignedPath
     };
     long startZipAlign = System.currentTimeMillis();
     // Using System.err and System.out on purpose. Don't want to pollute build messages with
@@ -1600,7 +1601,7 @@ private static final String VRPLAYER_ACTIVITY_CLASS = "es.uca.vedils.vr.helpers.
       return false;
     }
     String zipALignTimeMessage = "ZIPALIGN time: " +
-        ((System.currentTimeMillis() - startZipAlign) / 1000.0) + " seconds";
+            ((System.currentTimeMillis() - startZipAlign) / 1000.0) + " seconds";
     out.println(zipALignTimeMessage);
     LOG.info(zipALignTimeMessage);
     return true;
@@ -1616,13 +1617,13 @@ private static final String VRPLAYER_ACTIVITY_CLASS = "es.uca.vedils.vr.helpers.
       <APK>
     */
     String[] apksignerCommandLine = {
-      System.getProperty("java.home") + "/bin/java", "-jar",
-      "-mx" + mx + "M",
-      getResource(APKSIGNER_JAR), "sign",
-      "-ks", keystoreAbsolutePath,
-      "-ks-key-alias", "AndroidKey",
-      "-ks-pass", "pass:android",
-      apkAbsolutePath
+            System.getProperty("java.home") + "/bin/java", "-jar",
+            "-mx" + mx + "M",
+            getResource(APKSIGNER_JAR), "sign",
+            "-ks", keystoreAbsolutePath,
+            "-ks-key-alias", "AndroidKey",
+            "-ks-pass", "pass:android",
+            apkAbsolutePath
     };
 
     long startApkSigner = System.currentTimeMillis();
@@ -1672,174 +1673,175 @@ private static final String VRPLAYER_ACTIVITY_CLASS = "es.uca.vedils.vr.helpers.
     return true;
   }
 
-  private long classSize (List<File>classList) 
+  private long classSize (List<File>classList)
   {
     long size=0;
-    for(File file:classList) 
+    for(File file:classList)
     {
       size =size+file.length();
     }
-  return size;
-    
+    return size;
+
   }
   private void printClassesList(Map<Integer,List<File>> classesList )
   {
-      Iterator it = classesList.keySet().iterator();
-      while(it.hasNext()){
-          Integer key = (Integer) it.next();
-          LOG.info("CLASSESLIST: CLAVE:"+key+" TAMAÑO: "+classesList.get(key).size());
-      }
+    Iterator it = classesList.keySet().iterator();
+    while(it.hasNext()){
+      Integer key = (Integer) it.next();
+      LOG.info("CLASSESLIST: CLAVE:"+key+" TAMAÑO: "+classesList.get(key).size());
+    }
   }
 
 
   private boolean runDx(File classesDir, String dexedClassesDir, boolean secondTry) {
 
     Map<Integer,List<File>> classesList= new TreeMap<>();
-      List<File> libList = new ArrayList<File>();
-      List<File> inputList = new ArrayList<File>();
-      inputList.add(classesDir); //this is a directory, and won't be cached into the dex cache
-      inputList.add(new File(getResource(SIMPLE_ANDROID_RUNTIME_JAR)));
-      inputList.add(new File(getResource(KAWA_RUNTIME)));
-      inputList.add(new File(getResource(ACRA_RUNTIME)));
+    List<File> libList = new ArrayList<File>();
+    List<File> inputList = new ArrayList<File>();
+    inputList.add(classesDir); //this is a directory, and won't be cached into the dex cache
+    inputList.add(new File(getResource(SIMPLE_ANDROID_RUNTIME_JAR)));
+    inputList.add(new File(getResource(KAWA_RUNTIME)));
+    inputList.add(new File(getResource(ACRA_RUNTIME)));
 
-      for (String jar : SUPPORT_JARS) {
-          inputList.add(new File(getResource(jar)));
-      }
+    for (String jar : SUPPORT_JARS) {
+      inputList.add(new File(getResource(jar)));
+    }
 
-      for (String lib : uniqueLibsNeeded) {
-          libList.add(new File(lib));
-      }
+    for (String lib : uniqueLibsNeeded) {
+      libList.add(new File(lib));
+    }
 
-      Set<String> addedExtJars = new HashSet<String>();
-      for (String type : extCompTypes) {
-          String sourcePath = getExtCompDirPath(type) + SIMPLE_ANDROID_RUNTIME_JAR;
-          if (!addedExtJars.contains(sourcePath)) {
-              libList.add(new File(sourcePath));
-              addedExtJars.add(sourcePath);
-          }
+    Set<String> addedExtJars = new HashSet<String>();
+    for (String type : extCompTypes) {
+      String sourcePath = getExtCompDirPath(type) + SIMPLE_ANDROID_RUNTIME_JAR;
+      if (!addedExtJars.contains(sourcePath)) {
+        libList.add(new File(sourcePath));
+        addedExtJars.add(sourcePath);
       }
+    }
 
-      int offset = libList.size();
-      // Note: The choice of 12 libraries is arbitrary. We note that things
-      // worked to put all libraries into the first classes.dex file when we
-      // had 16 libraries and broke at 17. So this is a conservative number
-      // to try.
-      if (!secondTry) {           // First time through, try base + 12 libraries
-          if (offset > 12)
-              offset = 12;
-      } else {
-          offset = 0;               // Add NO libraries the second time through!
-      }
-     
-      for (int i = 0; i < offset; i++) {
-          inputList.add(libList.get(i));
-      }
-       System.err.println("runDx -- libraries");
-       for (File aFile : inputList) {
-         System.err.println(" inputList => " + aFile.getAbsolutePath());
-       }
-       for (File aFile : libList) {
-         System.err.println(" libList => " + aFile.getAbsolutePath());
-       }
+    int offset = libList.size();
+
+
+    for (int i = 0; i < offset; i++) {
+      inputList.add(libList.get(i));
+    }
+    System.err.println("runDx -- libraries");
+    for (File aFile : inputList) {
+      System.err.println(" inputList => " + aFile.getAbsolutePath());
+    }
+    for (File aFile : libList) {
+      System.err.println(" libList => " + aFile.getAbsolutePath());
+    }
 
     /**
      * Clasifica las librerias en  listas que tiene cada una un maximo de 2MB.
      * La indexacion falla cuando se superan las 65k lineas de codigo, por eso
      * se ha hecho una relacion de a mayor tamaño de archivo, mas lineas de codigo
      */
-      int bytesMega=2000000;
-      int classesListNumber=2;
-      
-      classesList.put(classesListNumber,new ArrayList<File>());
-      
-      int vueltas=0;
-      if (libList.size() - offset > 0) {
-          for (int i = offset; i < libList.size(); i++) {
-        	  vueltas=vueltas+1;		
-        	  
-           // LOG.info("NUMERO: "+classesListNumber+" SIZE: "+classSize(getClassList(classesListNumber,classesList)));
-              if(classSize(classesList.get(classesListNumber))>bytesMega)
-              {
-                
-                  classesListNumber++;
-                  classesList.put(classesListNumber,new ArrayList<File>());
-                  classesList.get(classesListNumber).add(libList.get(i));
-               
-              }else {
-                
-                  //classesList.put(classesListNumber, libList.get(i));
-                  classesList.get(classesListNumber).add(libList.get(i));
-                  
-              }
+    int bytesMega=2000000;
+    int classesListNumber=1;
 
+    classesList.put(classesListNumber,new ArrayList<File>());
+
+    int vueltas=0;
+    //if (libList.size() - offset > 0) {
+    for (int i = 0; i < inputList.size(); i++) {
+      vueltas=vueltas+1;
+
+      // LOG.info("NUMERO: "+classesListNumber+" SIZE: "+classSize(getClassList(classesListNumber,classesList)));
+      if(classSize(classesList.get(classesListNumber))>bytesMega)
+      {
+
+        classesListNumber++;
+        classesList.put(classesListNumber,new ArrayList<File>());
+        classesList.get(classesListNumber).add(inputList.get(i));
+
+      }else {
+
+        //classesList.put(classesListNumber, libList.get(i));
+        classesList.get(classesListNumber).add(inputList.get(i));
+
+      }
+
+
+    }
+    //}
+
+    LOG.info("inputList: "+inputList.size());
+    LOG.info("VUELTAS: "+vueltas);
+    printClassesList(classesList);
+
+    DexExecTask dexTask = new DexExecTask();
+    dexTask.setExecutable(getResource(DX_JAR));
+    //dexTask.setOutput(dexedClassesDir + File.separator + "classes.dex");
+    dexTask.setChildProcessRamMb(childProcessRamMb);
+    if (dexCacheDir == null) {
+      dexTask.setDisableDexMerger(true);
+    } else {
+      createDir(new File(dexCacheDir));
+      dexTask.setDexedLibs(dexCacheDir);
+    }
+
+    long startDx = System.currentTimeMillis();
+    // Using System.err and System.out on purpose. Don't want to pollute build messages with
+    // tools output
+    boolean dxSuccess=false;
+    synchronized (SYNC_KAWA_OR_DX) {
+      setProgress(50);
+      //dxSuccess = dexTask.execute(inputList);
+      //LOG.info("DXSUCCESS: "+dxSuccess);
+      if (classesList.size()>0){
+        LOG.info("INFO: entrado");
+        setProgress(60);
+
+        /**
+         * Recorre el Map donde estan todas las colecciones de librerias y las va indexando
+         */
+        for (int i = 1; i <classesList.size()+1 ; i++) {
+          if(i==1)
+          {
+            dexTask.setOutput(dexedClassesDir + File.separator + "classes" + ".dex");
+          }else {
+            dexTask.setOutput(dexedClassesDir + File.separator + "classes" + i + ".dex");
 
           }
-      }
-
-      LOG.info("inputList: "+inputList.size());
-      LOG.info("VUELTAS: "+vueltas);
-      printClassesList(classesList);
-      
-      DexExecTask dexTask = new DexExecTask();
-      dexTask.setExecutable(getResource(DX_JAR));
-      dexTask.setOutput(dexedClassesDir + File.separator + "classes.dex");
-      dexTask.setChildProcessRamMb(childProcessRamMb);
-      if (dexCacheDir == null) {
-          dexTask.setDisableDexMerger(true);
-      } else {
-          createDir(new File(dexCacheDir));
-          dexTask.setDexedLibs(dexCacheDir);
-      }
-
-      long startDx = System.currentTimeMillis();
-      // Using System.err and System.out on purpose. Don't want to pollute build messages with
-      // tools output
-      boolean dxSuccess;
-      synchronized (SYNC_KAWA_OR_DX) {
-          setProgress(50);
-          dxSuccess = dexTask.execute(inputList);
-          LOG.info("DXSUCCESS: "+dxSuccess);
-          if (dxSuccess && (classesList.size()>0)){
-              LOG.info("INFO: entrado");
-              setProgress(60);
-
-            /**
-             * Recorre el Map donde estan todas las colecciones de librerias y las va indexando
-             */
-              for (int i = 2; i <classesList.size()+2 ; i++) {
-                
-                dexTask.setOutput(dexedClassesDir + File.separator + "classes" + i + ".dex");
-                dxSuccess = dexTask.execute(classesList.get(i));
-                inputList = new ArrayList<File>();
-                hasNumber=i;
-              }
-              setProgress(75);
-
-          } else if (!dxSuccess) {  // The initial dx blew out, try more conservative
-              LOG.info("DX execution failed, trying with fewer libraries.");
-              if (secondTry) {        // Already tried the more conservative approach!
-                  LOG.warning("YAIL compiler - DX execution failed (secondTry!).");
-                  err.println("YAIL compiler - DX execution failed.");
-                  userErrors.print(String.format(ERROR_IN_STAGE, "DX"));
-                  return false;
-              } else {
-                  LOG.info("INFO: relanzando");
-                  return runDx(classesDir, dexedClassesDir, true);
-              }
+          dxSuccess = dexTask.execute(classesList.get(i));
+          inputList = new ArrayList<File>();
+          if(classesList.size()+1==2)
+          {
+            hasNumber=1;
+          }else {
+            hasNumber = i;
           }
-      }
-      if (!dxSuccess) {
-          LOG.warning("YAIL compiler - DX execution failed.");
+        }
+        setProgress(75);
+
+      } else if (!dxSuccess) {  // The initial dx blew out, try more conservative
+        LOG.info("DX execution failed, trying with fewer libraries.");
+        if (secondTry) {        // Already tried the more conservative approach!
+          LOG.warning("YAIL compiler - DX execution failed (secondTry!).");
           err.println("YAIL compiler - DX execution failed.");
           userErrors.print(String.format(ERROR_IN_STAGE, "DX"));
           return false;
+        } else {
+          LOG.info("INFO: relanzando");
+          return runDx(classesDir, dexedClassesDir, true);
+        }
       }
-      String dxTimeMessage = "DX time: " +
-              ((System.currentTimeMillis() - startDx) / 1000.0) + " seconds";
-      out.println(dxTimeMessage);
-      LOG.info(dxTimeMessage);
+    }
+    if (!dxSuccess) {
+      LOG.warning("YAIL compiler - DX execution failed.");
+      err.println("YAIL compiler - DX execution failed.");
+      userErrors.print(String.format(ERROR_IN_STAGE, "DX"));
+      return false;
+    }
+    String dxTimeMessage = "DX time: " +
+            ((System.currentTimeMillis() - startDx) / 1000.0) + " seconds";
+    out.println(dxTimeMessage);
+    LOG.info(dxTimeMessage);
 
-      return true;
+    return true;
   }
 
 
@@ -1907,7 +1909,7 @@ private static final String VRPLAYER_ACTIVITY_CLASS = "es.uca.vedils.vr.helpers.
       return false;
     }
     String aaptTimeMessage = "AAPT time: " +
-        ((System.currentTimeMillis() - startAapt) / 1000.0) + " seconds";
+            ((System.currentTimeMillis() - startAapt) / 1000.0) + " seconds";
     out.println(aaptTimeMessage);
     LOG.info(aaptTimeMessage);
 
@@ -2134,7 +2136,7 @@ private static final String VRPLAYER_ACTIVITY_CLASS = "es.uca.vedils.vr.helpers.
         file.deleteOnExit();
         file.getParentFile().mkdirs();
         Files.copy(Resources.newInputStreamSupplier(Compiler.class.getResource(resourcePath)),
-            file);
+                file);
         resources.put(resourcePath, file);
       }
       return file.getAbsolutePath();
@@ -2162,7 +2164,7 @@ private static final String VRPLAYER_ACTIVITY_CLASS = "es.uca.vedils.vr.helpers.
       File tmpLibDir = new File("/tmp/lib64");
       tmpLibDir.mkdirs();
       Files.copy(Resources.newInputStreamSupplier(Compiler.class.getResource("/tools/linux/lib64/libc++.so")),
-        outFile);
+              outFile);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -2172,15 +2174,15 @@ private static final String VRPLAYER_ACTIVITY_CLASS = "es.uca.vedils.vr.helpers.
    *  Loads permissions and information on component libraries and assets.
    */
   private void loadJsonInfo(ConcurrentMap<String, Set<String>> infoMap, String targetInfo)
-      throws IOException, JSONException {
+          throws IOException, JSONException {
     synchronized (infoMap) {
       if (!infoMap.isEmpty()) {
         return;
       }
 
       JSONArray buildInfo = new JSONArray(
-          "[" + simpleCompsBuildInfo.join(",") + "," +
-          extCompsBuildInfo.join(",") + "]");
+              "[" + simpleCompsBuildInfo.join(",") + "," +
+                      extCompsBuildInfo.join(",") + "]");
 
       for (int i = 0; i < buildInfo.length(); ++i) {
         JSONObject compJson = buildInfo.getJSONObject(i);
@@ -2316,7 +2318,7 @@ private static final String VRPLAYER_ACTIVITY_CLASS = "es.uca.vedils.vr.helpers.
 
   private void setProgress(int increments) {
     LOG.info("The current progress is "
-              + increments + "%");
+            + increments + "%");
     if (reporter != null) {
       reporter.report(increments);
     }
@@ -2325,7 +2327,7 @@ private static final String VRPLAYER_ACTIVITY_CLASS = "es.uca.vedils.vr.helpers.
   private void readBuildInfo() {
     try {
       simpleCompsBuildInfo = new JSONArray(Resources.toString(
-          Compiler.class.getResource(COMP_BUILD_INFO), Charsets.UTF_8));
+              Compiler.class.getResource(COMP_BUILD_INFO), Charsets.UTF_8));
 
       extCompsBuildInfo = new JSONArray();
       Set<String> readComponentInfos = new HashSet<String>();
@@ -2344,7 +2346,7 @@ private static final String VRPLAYER_ACTIVITY_CLASS = "es.uca.vedils.vr.helpers.
           jsonFile = new File(extCompRuntimeFileDir, "component_build_info.json");
           if (!jsonFile.exists()) {
             throw new IllegalStateException("No component_build_info.json in extension for " +
-                type);
+                    type);
           }
         }
         if (readComponentInfos.contains(jsonFile.getAbsolutePath())) {
@@ -2373,7 +2375,7 @@ private static final String VRPLAYER_ACTIVITY_CLASS = "es.uca.vedils.vr.helpers.
   private void prepareCompTypes(Set<String> neededTypes) {
     try {
       JSONArray buildInfo = new JSONArray(Resources.toString(
-          Compiler.class.getResource(COMP_BUILD_INFO), Charsets.UTF_8));
+              Compiler.class.getResource(COMP_BUILD_INFO), Charsets.UTF_8));
 
       Set<String> allSimpleTypes = Sets.newHashSet();
       for (int i = 0; i < buildInfo.length(); ++i) {
@@ -2399,13 +2401,13 @@ private static final String VRPLAYER_ACTIVITY_CLASS = "es.uca.vedils.vr.helpers.
       return candidate;
     }
     candidate = project.getAssetsDirectory().getAbsolutePath() + SLASH + EXT_COMPS_DIR_NAME +
-        SLASH + type;
+            SLASH + type;
     if (new File(candidate).exists()) {  // extension has FCQN as path element
       extTypePathCache.put(type, candidate);
       return candidate;
     }
     candidate = project.getAssetsDirectory().getAbsolutePath() + SLASH +
-        EXT_COMPS_DIR_NAME + SLASH + type.substring(0, type.lastIndexOf('.'));
+            EXT_COMPS_DIR_NAME + SLASH + type.substring(0, type.lastIndexOf('.'));
     if (new File(candidate).exists()) {  // extension has package name as path element
       extTypePathCache.put(type, candidate);
       return candidate;

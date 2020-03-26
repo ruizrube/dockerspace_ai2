@@ -244,13 +244,14 @@ public class VRPlayerActivity extends Activity {
             super.onCompletion();
         }
 
+        //synchornized este metodo para evitar que notifique dos veces el mismo tiempo transcurrido
         @Override
-        public void onNewFrame() {
+        public synchronized void onNewFrame() {
             super.onNewFrame();
 //
 //            Log.e("ONNEWFRAME", "position:  "+mVrVideoView.getCurrentPosition());
 //            Log.e("ONNEWFRAME", "total:  "+mVrVideoView.getDuration());
-            
+
             final Intent onNewFrameintent = new Intent("es.uca.vedils.vr.helpers.VRActivity.onNewFrame");
             onNewFrameintent.putExtra("currentPosition",mVrVideoView.getCurrentPosition());
             LocalBroadcastManager.getInstance(VRPlayerActivity.this).sendBroadcast(onNewFrameintent);

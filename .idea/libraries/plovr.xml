@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="plovr">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/git/appinventor-sources/appinventor/lib/plovr/plovr.jar!/" />
+      <root url="jar://$PROJECT_DIR$/git/appinventor-sources/appinventor/lib/plovr/plovr-eba786b34df9.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

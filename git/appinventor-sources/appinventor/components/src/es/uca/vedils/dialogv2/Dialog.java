@@ -1,8 +1,13 @@
 package es.uca.vedils.dialogv2;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.IntentFilter;
+import android.media.AudioManager;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
+import android.support.v4.content.LocalBroadcastManager;
 import com.google.appinventor.components.annotations.DesignerComponent;
 import com.google.appinventor.components.annotations.DesignerProperty;
 import com.google.appinventor.components.annotations.PropertyCategory;
@@ -23,6 +28,7 @@ import com.google.appinventor.components.runtime.Form;
 import com.google.appinventor.components.runtime.PermissionResultHandler;
 import com.google.appinventor.components.runtime.TextToSpeech;
 import com.google.appinventor.components.runtime.collect.Maps;
+import com.google.appinventor.components.runtime.util.ErrorMessages;
 import com.google.appinventor.components.runtime.util.OnInitializeListener;
 import com.google.protobuf.Value;
 
@@ -70,14 +76,52 @@ public class Dialog extends AndroidNonvisibleComponent implements Component {
 	private String path;
 	private String uuid = UUID.randomUUID().toString();
 	private final ComponentContainer container;
-	private SpeechRecognizerManager mSpeechManager;
+	private SpeechRecognizerNewManager mSpeechManager;
 	private Map<String, Value> fieldsMap;
 	private String language;
 	private static final Map<String, Locale> iso3LanguageToLocaleMap = Maps.newHashMap();
 
+
+
+	public BroadcastReceiver onErrorEventBroadCastReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+
+			String errorType=intent.getExtras().getString("errorType");
+			OnErrorListening(errorType);
+
+		}
+
+	};
+	public BroadcastReceiver onResultsEventBroadCastReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+
+			String speechResult=intent.getExtras().getString("speechResult");
+			OnFinishListening(speechResult);
+
+		}
+
+	};
+
 	public Dialog(ComponentContainer container) {
 		super(container.$form());
 		this.container = container;
+
+	}
+
+	public void registerReceivers()
+	{
+		LocalBroadcastManager.getInstance(container.$form()).registerReceiver(onErrorEventBroadCastReceiver,
+				new IntentFilter("es.uca.vedils.dialogv2.SpeechRecognizerManager.onError"));
+		LocalBroadcastManager.getInstance(container.$form()).registerReceiver(onResultsEventBroadCastReceiver,
+				new IntentFilter("es.uca.vedils.dialogv2.SpeechRecognizerManager.onResults"));
+
+	}
+	public void unregisterReceivers()
+	{
+		LocalBroadcastManager.getInstance(container.$form()).unregisterReceiver(onErrorEventBroadCastReceiver);
+		LocalBroadcastManager.getInstance(container.$form()).unregisterReceiver(onResultsEventBroadCastReceiver);
 
 	}
 
@@ -142,27 +186,32 @@ public class Dialog extends AndroidNonvisibleComponent implements Component {
 		this.path = path;
 	}
 
+	@RequiresApi(api = Build.VERSION_CODES.FROYO)
 	@SimpleFunction
 	public void StartListening()
 
 	{
 
-		mSpeechManager = new SpeechRecognizerManager(container.$form(), new SpeechRecognizerManager.onResultsReady() {
-			@Override
-			public void onResults(ArrayList<String> results) {
+		registerReceivers();
+		mSpeechManager= new SpeechRecognizerNewManager(container.$form(),language);
+		mSpeechManager.startListening();
 
-				mSpeechManager.destroy();
-				OnFinishListening(results.get(0).toString());
-
-
-
-
-			}
-		});
 
 		
 	}
+	@RequiresApi(api = Build.VERSION_CODES.FROYO)
+	@SimpleFunction
+	public void StopListening()
 
+	{
+
+		unregisterReceivers();
+		mSpeechManager.destroyObject();
+
+
+	}
+
+	@RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
 	@SimpleFunction
 	public void SendQuery(String query) {
 		if(!query.equals("")) {
@@ -195,7 +244,6 @@ public class Dialog extends AndroidNonvisibleComponent implements Component {
 		} catch (Exception e) {
 			StringWriter errors = new StringWriter();
 			e.printStackTrace(new PrintWriter(errors));
-
 			Log.e("DIALOG", "error:  " + "FAIL TO INIT DIALOGFLOW SESSION"+": "+errors.toString());
 		}
 
@@ -211,7 +259,7 @@ public class Dialog extends AndroidNonvisibleComponent implements Component {
 		fieldsMap = response.getQueryResult().getParameters().getFields();
 		}
 
-		OnResponse(action, fulfillment, query,hasParameters);
+		OnDialogFlowResponse(action, fulfillment, query,hasParameters);
 
 	}
 
@@ -231,8 +279,8 @@ public class Dialog extends AndroidNonvisibleComponent implements Component {
 	
 
 	@SimpleEvent
-	public void OnResponse(String action, String fulfillment, String query, boolean hasParameters) {
-		EventDispatcher.dispatchEvent(this, "OnResponse", action, fulfillment, query, hasParameters);
+	public void OnDialogFlowResponse(String action, String fulfillment, String query, boolean hasParameters) {
+		EventDispatcher.dispatchEvent(this, "OnDialogFlowResponse", action, fulfillment, query, hasParameters);
 
 	}
 	@SimpleEvent
@@ -241,8 +289,14 @@ public class Dialog extends AndroidNonvisibleComponent implements Component {
 
 	}
 
+	@SimpleEvent
+	public void OnErrorListening(String errorType) {
 
+		EventDispatcher.dispatchEvent(this, "OnErrorListening",errorType);
 
+	}
+
+	@RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
 	public class RequestTask extends AsyncTask<Void, Void, DetectIntentResponse> {
 
 		Activity activity;

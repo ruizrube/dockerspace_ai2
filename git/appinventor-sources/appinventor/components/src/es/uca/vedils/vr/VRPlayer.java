@@ -8,6 +8,7 @@ package es.uca.vedils.vr;
 
 import java.util.concurrent.TimeUnit;
 
+import android.media.AudioManager;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import com.google.appinventor.components.annotations.DesignerComponent;
@@ -68,11 +69,14 @@ x86_64Libraries="libpano_video_renderer.so")
 public class VRPlayer extends AndroidNonvisibleComponent implements Component, ActivityResultListener {
 
 	private final ComponentContainer container;
-	
+	private AudioManager audioManager;
 	public String resultado="";
-	public VRPlayerActivity hola;
-	
 	private String youtubeVideoID = "";
+	private long oldSecond=0;
+	private long oldMinute=0;
+	private long minutes=0;
+	private long seconds=0;
+
 	
 	public BroadcastReceiver onClickEventBroadCastReceiver = new BroadcastReceiver() {
 		@Override
@@ -89,16 +93,21 @@ public class VRPlayer extends AndroidNonvisibleComponent implements Component, A
 			
 			long currentPosition=intent.getExtras().getLong("currentPosition");
 
-			 Log.e("APPINVENTOR", "position:  "+currentPosition);
-			 
-			 long minutes = TimeUnit.MILLISECONDS.toMinutes(currentPosition);
-             long seconds = TimeUnit.MILLISECONDS.toSeconds(currentPosition);
-             
+			//convierte en minutos y segundos el tiempo transcurrido de video
+
+			  minutes = TimeUnit.MILLISECONDS.toMinutes(currentPosition);
+              seconds = TimeUnit.MILLISECONDS.toSeconds(currentPosition);
+
+              //si los minutos son mayores que 0, se asegura que el numero de segundos es correcto
              if(minutes>0) 
              {
             	 seconds=seconds-(minutes*60);
-             }             
-			onNewFrame(minutes,seconds);
+             }
+             //para evitar que se notifiquen dos veces el mismo segundo, se hace una comparativa entre el anterior y el nuevo notificado
+             if(oldSecond!=seconds) {
+				 onNewFrame(minutes, seconds);
+				 oldSecond=seconds;
+			 }
 		}
 
 
@@ -128,9 +137,12 @@ public class VRPlayer extends AndroidNonvisibleComponent implements Component, A
 	@SimpleFunction(description = "Volume VRPlayer")
 	public void setVolumeVRPlayer(int volume)
 	{
-		Intent volumeIntent = new Intent("es.uca.vedils.vr.helpers.VRActivity.setVolumeVideoPlayer");
-		volumeIntent.putExtra("volume", volume);
-		LocalBroadcastManager.getInstance(container.$context()).sendBroadcast(volumeIntent);
+		audioManager = (AudioManager)container.$form().getSystemService(Context.AUDIO_SERVICE);
+		int currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+		int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+		float percent = volume*0.01f;
+		int percentVolume = (int) (maxVolume*percent);
+		audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, percentVolume, 0);
 	}
 	public void registerReceivers() 
 	{

@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="components">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/git/appinventor-sources/appinventor/build/components/AndroidRuntime.jar!/" />
+      <root url="jar://$PROJECT_DIR$/git/appinventor-sources/appinventor/build/components/Barcode.jar!/" />
+      <root url="jar://$PROJECT_DIR$/git/appinventor-sources/appinventor/build/components/CommonConstants-gwt.jar!/" />
+      <root url="jar://$PROJECT_DIR$/git/appinventor-sources/appinventor/build/components/CommonConstants.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

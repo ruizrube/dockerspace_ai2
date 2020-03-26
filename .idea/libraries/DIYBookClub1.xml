@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="DIYBookClub1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/git/appinventor-sources/appinventor/appengine/build/war/templates/DIYBookClub/DIYBookClub.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

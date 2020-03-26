@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="build1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/git/appinventor-sources/appinventor/appengine/build/AiSharedLib.jar!/" />
+      <root url="jar://$PROJECT_DIR$/git/appinventor-sources/appinventor/appengine/build/AiServerLib.jar!/" />
+      <root url="jar://$PROJECT_DIR$/git/appinventor-sources/appinventor/appengine/build/AiRebindLib.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

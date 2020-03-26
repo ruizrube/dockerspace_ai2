@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/git/appinventor-sources/appinventor/build/components/ComponentTranslation/ComponentTranslation.iml" filepath="$PROJECT_DIR$/git/appinventor-sources/appinventor/build/components/ComponentTranslation/ComponentTranslation.iml" />
+      <module fileurl="file://$PROJECT_DIR$/git/appinventor-sources/appinventor/aimerger/aimerger.iml" filepath="$PROJECT_DIR$/git/appinventor-sources/appinventor/aimerger/aimerger.iml" />
+      <module fileurl="file://$PROJECT_DIR$/git/appinventor-sources/appinventor/aimerger_for_appinv_classic/aimerger_for_appinv_classic.iml" filepath="$PROJECT_DIR$/git/appinventor-sources/appinventor/aimerger_for_appinv_classic/aimerger_for_appinv_classic.iml" />
+      <module fileurl="file://$PROJECT_DIR$/git/appinventor-sources/appinventor/appengine/appengine.iml" filepath="$PROJECT_DIR$/git/appinventor-sources/appinventor/appengine/appengine.iml" />
+      <module fileurl="file://$PROJECT_DIR$/git/appinventor-sources/appinventor/blocklyeditor/blocklyeditor.iml" filepath="$PROJECT_DIR$/git/appinventor-sources/appinventor/blocklyeditor/blocklyeditor.iml" />
+      <module fileurl="file://$PROJECT_DIR$/git/appinventor-sources/appinventor/common/build/build.iml" filepath="$PROJECT_DIR$/git/appinventor-sources/appinventor/common/build/build.iml" />
+      <module fileurl="file://$PROJECT_DIR$/git/appinventor-sources/appinventor/buildserver/buildserver.iml" filepath="$PROJECT_DIR$/git/appinventor-sources/appinventor/buildserver/buildserver.iml" />
+      <module fileurl="file://$PROJECT_DIR$/git/appinventor-sources/appinventor/components/build/classes/classes.iml" filepath="$PROJECT_DIR$/git/appinventor-sources/appinventor/components/build/classes/classes.iml" />
+      <module fileurl="file://$PROJECT_DIR$/git/appinventor-sources/appinventor/common/common.iml" filepath="$PROJECT_DIR$/git/appinventor-sources/appinventor/common/common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/git/appinventor-sources/appinventor/components/components.iml" filepath="$PROJECT_DIR$/git/appinventor-sources/appinventor/components/components.iml" />
+      <module fileurl="file://$PROJECT_DIR$/git/appinventor-sources/appinventor/misc/misc.iml" filepath="$PROJECT_DIR$/git/appinventor-sources/appinventor/misc/misc.iml" />
+    </modules>
+  </component>
+</project>

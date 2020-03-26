@@ -2,6 +2,7 @@ package es.uca.vedils.dialogv2;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -9,19 +10,25 @@ import android.os.Handler;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
+import android.support.annotation.RequiresApi;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import java.util.ArrayList;
 
+import es.uca.vedils.dialogv2.Dialog;
+import es.uca.vedils.vr.helpers.VRPlayerActivity;
+
 /**
  * Created by yoda on 16/11/15.
+ * Modified by rubarez on 24/03/20
  */
 public class SpeechRecognizerManager {
 
     protected AudioManager mAudioManager;
     protected SpeechRecognizer mSpeechRecognizer;
     protected Intent mSpeechRecognizerIntent;
-
+    protected Context mContext;
     protected boolean mIsListening;
     private boolean mIsStreamSolo;
 
@@ -36,8 +43,10 @@ public class SpeechRecognizerManager {
 
 
 
-    public SpeechRecognizerManager(Context context,onResultsReady listener)
+    @RequiresApi(api = Build.VERSION_CODES.FROYO)
+    public SpeechRecognizerManager(Context context, onResultsReady listener)
     {
+        mContext=context;
         try{
             mListener=listener;
         }
@@ -57,6 +66,7 @@ public class SpeechRecognizerManager {
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.FROYO)
     private void listenAgain()
     {
         if(mIsListening) {
@@ -129,41 +139,57 @@ public class SpeechRecognizerManager {
         public synchronized void onError(int error)
         {
 
-            if(error==SpeechRecognizer.ERROR_RECOGNIZER_BUSY)
+            /*if(error==SpeechRecognizer.ERROR_RECOGNIZER_BUSY)
             {
-                if(mListener!=null) {
+
+                final Intent onErrorIntent = new Intent("es.uca.vedils.dialogv2.SpeechRecognizerManager.onError");
+                onErrorIntent.putExtra("errorType","ERROR_RECOGNIZER_BUSY");
+                LocalBroadcastManager.getInstance(mContext).sendBroadcast(onErrorIntent);
+
+                /*if(mListener!=null) {
                     ArrayList<String> errorList=new ArrayList<String>(1);
                     errorList.add("ERROR RECOGNIZER BUSY");
                     if(mListener!=null)
                         mListener.onResults(errorList);
-                }
-                return;
-            }
+                }*/
+
+                //return;
+            //}
 
             if(error==SpeechRecognizer.ERROR_NO_MATCH)
             {
-                if(mListener!=null) {
+                final Intent onErrorIntent = new Intent("es.uca.vedils.dialogv2.SpeechRecognizerManager.onError");
+                onErrorIntent.putExtra("errorType","ERROR NO MATCH");
+                LocalBroadcastManager.getInstance(mContext).sendBroadcast(onErrorIntent);
+
+                /*if(mListener!=null) {
                 	
                 	 ArrayList<String> errorList=new ArrayList<String>(1);
                      errorList.add("ERROR NO MATCH");
-                    mListener.onResults(errorList);
-                }
+                     mListener.onResults(errorList);
+
+
+                }*/
             }
 
             if(error==SpeechRecognizer.ERROR_NETWORK)
             {
-                ArrayList<String> errorList=new ArrayList<String>(1);
+                final Intent onErrorIntent = new Intent("es.uca.vedils.dialogv2.SpeechRecognizerManager.onError");
+                onErrorIntent.putExtra("errorType","ERROR_NETWORK");
+                LocalBroadcastManager.getInstance(mContext).sendBroadcast(onErrorIntent);
+
+               /* ArrayList<String> errorList=new ArrayList<String>(1);
                 errorList.add("STOPPED LISTENING");
                 if(mListener!=null)
-                    mListener.onResults(errorList);
+                    mListener.onResults(errorList);*/
             }
             Log.d(TAG, "error = " + error);
-            new Handler().postDelayed(new Runnable() {
+            /*new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     listenAgain();
                 }
-            },100);
+            },100);*/
 
 
         }
@@ -186,9 +212,13 @@ public class SpeechRecognizerManager {
         @Override
         public void onResults(Bundle results)
         {
-            if(results!=null && mListener!=null)
+            if(results!=null && mListener!=null) {
                 mListener.onResults(results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION));
-            listenAgain();
+            }else
+                {
+                    //listenAgain();
+                }
+
 
         }
 
@@ -216,4 +246,5 @@ public class SpeechRecognizerManager {
     {
         return mMute;
     }
+
 }

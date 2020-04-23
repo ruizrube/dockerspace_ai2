@@ -307,6 +307,9 @@ public class VRPlayerActivity extends Activity {
             VrVideoView.Options options = new VrVideoView.Options();
             options.inputType = VrVideoView.Options.FORMAT_DEFAULT;
             mVrVideoView.loadVideo(Uri.parse(url), options);
+
+
+
             //mVrVideoView.loadVideoFromAsset("video.mp4", options);
         } catch( IOException e ) {
             //Handle exception

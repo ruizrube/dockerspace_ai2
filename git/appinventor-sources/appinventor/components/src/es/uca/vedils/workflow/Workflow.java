@@ -175,6 +175,7 @@ public class Workflow extends AndroidNonvisibleComponent implements Component {
 	public void PutData(String dataKey, Object dataValue) {
 
 		this.data.put(dataKey, dataValue);
+		Log.d("Workflow", "Data Values: " + data.toString());
 
 	}
 
@@ -281,9 +282,9 @@ public class Workflow extends AndroidNonvisibleComponent implements Component {
 	}
 
 	@SimpleEvent
-	public void TaskLaunched(String taskType, List taskArguments) {
+	public void TaskLaunched(String taskType, List taskArguments, String nodeName) {
 
-		EventDispatcher.dispatchEvent(this, "TaskLaunched", taskType, taskArguments);
+		EventDispatcher.dispatchEvent(this, "TaskLaunched", taskType, taskArguments, nodeName);
 	}
 
 	private WorkflowNode retrieveNextNode(WorkflowNode node) {
@@ -358,7 +359,7 @@ public class Workflow extends AndroidNonvisibleComponent implements Component {
 
 	private void dispatchTask(WorkflowNode node) {
 
-		TaskLaunched(node.getSubType(), node.getArguments());
+		TaskLaunched(node.getSubType(), node.getArguments(), node.getName());
 		// WorkflowError("CurrentNodeType unknown");
 	}
 

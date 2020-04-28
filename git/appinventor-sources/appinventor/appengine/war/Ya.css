@@ -100,7 +100,7 @@ select {
 
 .ode-ContextMenuItem-selected {
   color: #ffffff;
-  background: #99CC00;
+  background: #99cc00;
 }
 
 .ode-ContextMenuItem-disabled {
@@ -1459,6 +1459,7 @@ a.ode-ExtensionAnchor:hover {
 }
 .gwt-ProgressBar-shell .gwt-ProgressBar-bar {
   background-color: #8fc202;
+
 }
 .gwt-ProgressBar-shell .gwt-ProgressBar-text {
   position: absolute;

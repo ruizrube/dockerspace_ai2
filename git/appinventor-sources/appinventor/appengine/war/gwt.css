@@ -271,7 +271,7 @@ a, a:visited, a:hover {
 }
 .gwt-MenuBar-horizontal {
   background: #e3e8f3 url(images/hborder.png) repeat-x 0px -2003px;
-  border: 1px solid #BBBBBB;
+  border: 1px solid #bbbbbb;
 }
 .gwt-MenuBar-horizontal .gwt-MenuItem {
   padding: 0px 10px;

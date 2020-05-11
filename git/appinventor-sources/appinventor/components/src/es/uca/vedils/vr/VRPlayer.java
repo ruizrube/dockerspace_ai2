@@ -6,31 +6,22 @@
 
 package es.uca.vedils.vr;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
 
+import android.Manifest;
 import android.media.AudioManager;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
-import com.google.appinventor.components.annotations.DesignerComponent;
-import com.google.appinventor.components.annotations.DesignerProperty;
-import com.google.appinventor.components.annotations.SimpleEvent;
-import com.google.appinventor.components.annotations.SimpleFunction;
-import com.google.appinventor.components.annotations.SimpleObject;
-import com.google.appinventor.components.annotations.SimpleProperty;
-import com.google.appinventor.components.annotations.UsesActivities;
-import com.google.appinventor.components.annotations.UsesLibraries;
-import com.google.appinventor.components.annotations.UsesNativeLibraries;
-import com.google.appinventor.components.annotations.UsesPermissions;
+import com.google.appinventor.components.annotations.*;
 import com.google.appinventor.components.annotations.androidmanifest.ActionElement;
 import com.google.appinventor.components.annotations.androidmanifest.ActivityElement;
 import com.google.appinventor.components.annotations.androidmanifest.IntentFilterElement;
 import com.google.appinventor.components.common.ComponentCategory;
 import com.google.appinventor.components.common.PropertyTypeConstants;
-import com.google.appinventor.components.runtime.ActivityResultListener;
-import com.google.appinventor.components.runtime.AndroidNonvisibleComponent;
-import com.google.appinventor.components.runtime.Component;
-import com.google.appinventor.components.runtime.ComponentContainer;
-import com.google.appinventor.components.runtime.EventDispatcher;
+import com.google.appinventor.components.runtime.*;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -38,7 +29,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import com.google.appinventor.components.runtime.util.MediaUtil;
 import es.uca.vedils.vr.helpers.VRPlayerActivity;
+import es.uca.vedils.workflow.Workflow;
+import es.uca.vedils.workflow.helpers.WorkflowLoader;
 
 
 /**
@@ -72,6 +66,7 @@ public class VRPlayer extends AndroidNonvisibleComponent implements Component, A
 	private AudioManager audioManager;
 	public String resultado="";
 	private String youtubeVideoID = "";
+	private String localVideoPath="";
 	private long oldSecond=0;
 	private long oldMinute=0;
 	private long minutes=0;
@@ -122,17 +117,26 @@ public class VRPlayer extends AndroidNonvisibleComponent implements Component, A
 	public VRPlayer(ComponentContainer container) {
 		super(container.$form());
 		this.container = container;
-		
 
 	}
 
 	@SimpleFunction(description = "Open VRPlayer")
-	public void openVRPlayer() 
+	public void openVRPlayer(String videoSource)
 	{
 		Intent intent = new Intent(container.$context(), VRPlayerActivity.class);
-		intent.putExtra("mYoutubeVideoID", youtubeVideoID);
+		if(videoSource.contains("."))
+		{
+
+			intent.putExtra("mLocalVideoPath", localVideoPath);
+
+		}else {
+
+			intent.putExtra("mYoutubeVideoID", youtubeVideoID);
+
+		}
 		registerReceivers();
-		container.$context().startActivityForResult(intent,0);
+		container.$context().startActivityForResult(intent, 0);
+
 	}
 	@SimpleFunction(description = "Volume VRPlayer")
 	public void setVolumeVRPlayer(int volume)
@@ -166,6 +170,40 @@ public class VRPlayer extends AndroidNonvisibleComponent implements Component, A
 	  public void YoutubeVideoID(String url) {
 	    this.youtubeVideoID =url;
 	  }
+
+
+
+	@SimpleProperty(category = PropertyCategory.APPEARANCE)
+	public String LocalVideo() {
+		return localVideoPath;
+	}
+
+	@DesignerProperty(editorType = PropertyTypeConstants.PROPERTY_TYPE_ASSET, defaultValue = "")
+	@SimpleProperty
+	public void LocalVideo(final String path) {
+
+		if (MediaUtil.isExternalFile(path)
+				&& container.$form().isDeniedPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+			container.$form().askPermission(Manifest.permission.READ_EXTERNAL_STORAGE, new PermissionResultHandler() {
+				@Override
+				public void HandlePermissionResponse(String permission, boolean granted) {
+					if (granted) {
+						LocalVideo(path);
+					} else {
+						container.$form().dispatchPermissionDeniedEvent(VRPlayer.this, "Definition", permission);
+					}
+				}
+			});
+			return;
+		}
+
+		localVideoPath = (path == null) ? "" : path;
+
+	}
+
+
+
+
 	 @SimpleFunction
 	 public void pause() 
 	 {

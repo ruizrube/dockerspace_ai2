@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import android.net.Uri;
 import es.uca.vedils.vr.model.YTMedia;
+import es.uca.vedils.vr.model.YTSubtitles;
 import es.uca.vedils.vr.model.YoutubeMeta;
 import es.uca.vedils.vr.youtube.ExtractorException;
 import es.uca.vedils.vr.youtube.YoutubeStreamExtractor;
@@ -266,7 +267,7 @@ public class VRPlayerActivity extends Activity {
         new YoutubeStreamExtractor(new YoutubeStreamExtractor.ExtractorListner(){
 
             @Override
-            public void onExtractionDone(List<YTMedia> adativeStream, final List<YTMedia> muxedStream, YoutubeMeta meta) {
+            public void onExtractionDone(List<YTMedia> adativeStream, List<YTMedia> muxedStream, List<YTSubtitles> subList, YoutubeMeta meta) {
 
 
                 if (adativeStream.isEmpty()) {
@@ -297,6 +298,10 @@ public class VRPlayerActivity extends Activity {
 
 
             }
+
+
+
+
         }).useDefaultLogin().Extract("https://youtu.be/"+mYoutubeVideoID);
     }
 

@@ -102,7 +102,6 @@ public class VRPlayerActivity extends Activity {
         initViews();
         extractYoutubeUrl();
         
-      
 
     }
 
@@ -242,7 +241,13 @@ public class VRPlayerActivity extends Activity {
 
         @Override
         public void onCompletion() {
+
             super.onCompletion();
+
+            final Intent onCompletionintent = new Intent("es.uca.vedils.vr.helpers.VRActivity.onCompletion");
+            LocalBroadcastManager.getInstance(VRPlayerActivity.this).sendBroadcast(onCompletionintent);
+
+
         }
 
         //synchornized este metodo para evitar que notifique dos veces el mismo tiempo transcurrido

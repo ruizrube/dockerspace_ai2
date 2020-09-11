@@ -281,12 +281,32 @@ public class Workflow extends AndroidNonvisibleComponent implements Component {
 		EventDispatcher.dispatchEvent(this, "WorkflowError", errorType);
 	}
 
-	@SimpleEvent
+	/*@SimpleEvent
 	public void TaskLaunched(String taskType, List taskArguments, String nodeName) {
 
 		EventDispatcher.dispatchEvent(this, "TaskLaunched", taskType, taskArguments, nodeName);
-	}
+	}*/
 
+	@SimpleEvent
+	public void ServiceTaskLaunched(List taskArguments, String nodeName) {
+
+		EventDispatcher.dispatchEvent(this, "ServiceTaskLaunched", taskArguments, nodeName);
+	}
+	@SimpleEvent
+	public void UserTaskLaunched(List taskArguments, String nodeName) {
+
+		EventDispatcher.dispatchEvent(this, "UserTaskLaunched", taskArguments, nodeName);
+	}
+	@SimpleEvent
+	public void ManualTaskLaunched(List taskArguments, String nodeName) {
+
+		EventDispatcher.dispatchEvent(this, "ManualTaskLaunched", taskArguments, nodeName);
+	}
+	@SimpleEvent
+	public void ScriptTaskLaunched(List taskArguments, String nodeName) {
+
+		EventDispatcher.dispatchEvent(this, "ScriptTaskLaunched", taskArguments, nodeName);
+	}
 	private WorkflowNode retrieveNextNode(WorkflowNode node) {
 
 		WorkflowNode result = null;
@@ -359,7 +379,24 @@ public class Workflow extends AndroidNonvisibleComponent implements Component {
 
 	private void dispatchTask(WorkflowNode node) {
 
-		TaskLaunched(node.getSubType(), node.getArguments(), node.getName());
+		switch (node.getSubType()){
+
+			case "SERVICE TASK":
+				ServiceTaskLaunched(node.getArguments(), node.getName());
+				break;
+			case "USER TASK":
+
+				UserTaskLaunched(node.getArguments(), node.getName());
+				break;
+			case "MANUAL TASK":
+
+				ManualTaskLaunched(node.getArguments(), node.getName());
+				break;
+			case "SCRIPT TASK":
+				ScriptTaskLaunched(node.getArguments(), node.getName());
+				break;
+		}
+		//TaskLaunched(node.getSubType(), node.getArguments(), node.getName());
 		// WorkflowError("CurrentNodeType unknown");
 	}
 

@@ -30,6 +30,7 @@ import com.google.appinventor.components.runtime.TextToSpeech;
 import com.google.appinventor.components.runtime.collect.Maps;
 import com.google.appinventor.components.runtime.util.ErrorMessages;
 import com.google.appinventor.components.runtime.util.OnInitializeListener;
+import com.google.gson.JsonElement;
 import com.google.protobuf.Value;
 
 import android.app.Activity;
@@ -48,10 +49,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.UUID;
-import java.util.Locale;
+import java.util.*;
 
 import com.google.api.gax.core.FixedCredentialsProvider;
 import com.google.auth.oauth2.GoogleCredentials;
@@ -251,19 +249,38 @@ public class Dialog extends AndroidNonvisibleComponent implements Component {
 
 	public void getResponseData(DetectIntentResponse response) {
 		String action = response.getQueryResult().getAction();
-		String fulfillment = response.getQueryResult().getFulfillmentText();
+		//String fulfillment = response.getQueryResult().getFulfillmentText();
 		String query = response.getQueryResult().getQueryText();
-		boolean hasParameters=response.getQueryResult().hasParameters();
+		/*boolean hasParameters=response.getQueryResult().hasParameters();
 		
 		if(response.getQueryResult().hasParameters()) {
-		fieldsMap = response.getQueryResult().getParameters().getFields();
-		}
+		fieldsMap = response.getQueryResult().getParameters().getFieldsMap();
+		}*/
 
-		OnDialogFlowResponse(action, fulfillment, query,hasParameters);
+		//////////////////////////////////////////////////
+// Action paramaters
+		List<List<String>> params = new ArrayList<List<String>>();
+		List<String> aux = new ArrayList<String>();
+
+		if (response.getQueryResult().getParameters() != null
+				&& !response.getQueryResult().getParameters().getFieldsMap().isEmpty()) {
+			for (final Map.Entry<String, Value> entry : response.getQueryResult().getParameters().getFieldsMap().entrySet()) {
+
+				aux = new ArrayList<String>();
+
+				aux.add(entry.getKey());
+
+				aux.add(entry.getValue().getStringValue());
+
+				params.add(aux);
+			}
+		}
+		///////////////////////////////////////////////////////////
+		OnAnalizeResponse(action,query,params);
 
 	}
 
-	@SimpleFunction
+	/*@SimpleFunction
 	public String GetParameterFromResponse(String key) {
 		
 		String parameterValue="";
@@ -275,12 +292,12 @@ public class Dialog extends AndroidNonvisibleComponent implements Component {
 			Log.e("DIALOG", "error:  " + "FAIL TO GET PARAMETER VALUE");
 		}
 		return parameterValue;
-	}
+	}*/
 	
 
 	@SimpleEvent
-	public void OnDialogFlowResponse(String action, String fulfillment, String query, boolean hasParameters) {
-		EventDispatcher.dispatchEvent(this, "OnDialogFlowResponse", action, fulfillment, query, hasParameters);
+	public void OnAnalizeResponse(String action, String query, List<List<String>> params) {
+		EventDispatcher.dispatchEvent(this, "OnAnalizeResponse", action, query, params);
 
 	}
 	@SimpleEvent

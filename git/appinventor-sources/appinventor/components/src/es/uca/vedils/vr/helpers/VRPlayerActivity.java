@@ -13,7 +13,11 @@ import android.support.v4.content.LocalBroadcastManager;
 
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.google.vr.sdk.widgets.video.VrVideoEventListener;
 import com.google.vr.sdk.widgets.video.VrVideoView;
@@ -37,7 +41,11 @@ public class VRPlayerActivity extends Activity {
 
     private VrVideoView mVrVideoView;
     private boolean registersActive=false;
+    private boolean isLocalVideo=false;
     private String mYoutubeVideoID = "";
+    private String mVideoURL = "";
+    private String mVideoLocalAsset = "";
+
     
     
     public BroadcastReceiver pauseVideoBroadCastReceiver = new BroadcastReceiver() {
@@ -100,15 +108,43 @@ public class VRPlayerActivity extends Activity {
 
         getExtraIntent();
         initViews();
-        extractYoutubeUrl();
-        
+
+        if(isLocalVideo){
+            //carga local
+            initVideo(mVideoLocalAsset);
+        }else{
+
+            if(isValidURL(mVideoURL)){
+
+                if(isYoutubeUrl(mVideoURL)){
+                    mYoutubeVideoID=getVideoIdFromYoutubeUrl(mVideoURL);
+                    if(mYoutubeVideoID!=null){
+                        extractYoutubeUrl();
+                    }
+
+                }else{
+                    //todo cargar video url que no viene de youtube
+                    initVideo(mVideoURL);
+                }
+            }
+        }
+
+
 
     }
 
     public void getExtraIntent() {
      
      this.extras = this.getIntent().getExtras();
-     this.mYoutubeVideoID = this.extras.getString("mYoutubeVideoID");
+     this.isLocalVideo = this.extras.getBoolean("isLocalVideo");
+
+     if(!isLocalVideo){
+
+         this.mVideoURL = this.extras.getString("mVideoURL");
+     }else{
+
+         this.mVideoLocalAsset = this.extras.getString("mVideoLocalAsset");
+     }
 
     }
     private void registerReceivers() 
@@ -155,9 +191,44 @@ public class VRPlayerActivity extends Activity {
 
         mVrVideoView.setEventListener(new ActivityEventListener());
         
-        
 
 
+    }
+    public boolean isValidURL(String urlStr) {
+        try {
+            URL url = new URL(urlStr);
+            return true;
+        }
+        catch (MalformedURLException e) {
+            return false;
+        }
+    }
+    public static String getVideoIdFromYoutubeUrl(String youtubeUrl)
+    {
+
+        String pattern = "(?<=watch\\?v=|/videos/|embed\\/|youtu.be\\/|\\/v\\/|\\/e\\/|watch\\?v%3D|watch\\?feature=player_embedded&v=|%2Fvideos%2F|embed%\u200C\u200B2F|youtu.be%2F|%2Fv%2F)[^#\\&\\?\\n]*";
+        Pattern compiledPattern = Pattern.compile(pattern);
+        Matcher matcher = compiledPattern.matcher(youtubeUrl);
+        if (matcher.find()) {
+            return matcher.group();
+        }
+        return null;
+    }
+    @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
+    public static boolean isYoutubeUrl(String youTubeURl)
+    {
+        boolean success;
+        String pattern = "^(http(s)?:\\/\\/)?((w){3}.)?youtu(be|.be)?(\\.com)?\\/.+";
+        if (!youTubeURl.isEmpty() && youTubeURl.matches(pattern))
+        {
+            success = true;
+        }
+        else
+        {
+            // Not Valid youtube URL
+            success = false;
+        }
+        return success;
     }
     @Override
     protected void onStart() {
@@ -310,13 +381,18 @@ public class VRPlayerActivity extends Activity {
         }).useDefaultLogin().Extract("https://youtu.be/"+mYoutubeVideoID);
     }
 
-    private void initVideo(String url) {
+    private void initVideo(String source) {
 
         try {
 
             VrVideoView.Options options = new VrVideoView.Options();
             options.inputType = VrVideoView.Options.FORMAT_DEFAULT;
-            mVrVideoView.loadVideo(Uri.parse(url), options);
+            if(isLocalVideo){
+                mVrVideoView.loadVideoFromAsset(source,options);
+            }else{
+                mVrVideoView.loadVideo(Uri.parse(source), options);
+            }
+
 
 
 

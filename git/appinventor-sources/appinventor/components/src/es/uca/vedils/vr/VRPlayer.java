@@ -11,16 +11,7 @@ import java.util.concurrent.TimeUnit;
 import android.media.AudioManager;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
-import com.google.appinventor.components.annotations.DesignerComponent;
-import com.google.appinventor.components.annotations.DesignerProperty;
-import com.google.appinventor.components.annotations.SimpleEvent;
-import com.google.appinventor.components.annotations.SimpleFunction;
-import com.google.appinventor.components.annotations.SimpleObject;
-import com.google.appinventor.components.annotations.SimpleProperty;
-import com.google.appinventor.components.annotations.UsesActivities;
-import com.google.appinventor.components.annotations.UsesLibraries;
-import com.google.appinventor.components.annotations.UsesNativeLibraries;
-import com.google.appinventor.components.annotations.UsesPermissions;
+import com.google.appinventor.components.annotations.*;
 import com.google.appinventor.components.annotations.androidmanifest.ActionElement;
 import com.google.appinventor.components.annotations.androidmanifest.ActivityElement;
 import com.google.appinventor.components.annotations.androidmanifest.IntentFilterElement;
@@ -64,12 +55,12 @@ public class VRPlayer extends AndroidNonvisibleComponent implements Component, A
 
 	private final ComponentContainer container;
 	private AudioManager audioManager;
-	public String resultado="";
-	private String youtubeVideoID = "";
+	private String videoURL = "";
+	private String videoLocalAsset="";
 	private long oldSecond=0;
-	private long oldMinute=0;
 	private long minutes=0;
 	private long seconds=0;
+	private boolean isLocalVideo=false;
 
 	
 	public BroadcastReceiver onClickEventBroadCastReceiver = new BroadcastReceiver() {
@@ -124,7 +115,6 @@ public class VRPlayer extends AndroidNonvisibleComponent implements Component, A
 	public VRPlayer(ComponentContainer container) {
 		super(container.$form());
 		this.container = container;
-		
 
 	}
 
@@ -132,7 +122,13 @@ public class VRPlayer extends AndroidNonvisibleComponent implements Component, A
 	public void OpenVRPlayer()
 	{
 		Intent intent = new Intent(container.$context(), VRPlayerActivity.class);
-		intent.putExtra("mYoutubeVideoID", youtubeVideoID);
+		intent.putExtra("isLocalVideo", isLocalVideo);
+		if(isLocalVideo){
+			intent.putExtra("mVideoLocalAsset", videoLocalAsset);
+		}else{
+			intent.putExtra("mVideoURL", videoURL);
+		}
+
 		registerReceivers();
 		container.$context().startActivityForResult(intent,0);
 	}
@@ -161,16 +157,40 @@ public class VRPlayer extends AndroidNonvisibleComponent implements Component, A
 		LocalBroadcastManager.getInstance(container.$form()).unregisterReceiver(onNewFrameEventBroadCastReceiver);
 		LocalBroadcastManager.getInstance(container.$form()).unregisterReceiver(onCompletionEventBroadCastReceiver);
 	}
+
 	@SimpleProperty
-	public String YoutubeVideoID() {
-		    return youtubeVideoID;
+	public String VideoURL() {
+		    return videoURL;
 		    
 		  }
 	 @DesignerProperty(editorType = PropertyTypeConstants.PROPERTY_TYPE_TEXT, defaultValue = "")
 	 @SimpleProperty
-	  public void YoutubeVideoID(String url) {
-	    this.youtubeVideoID =url;
+	  public void VideoURL(String url) {
+
+		if(url!=""){
+
+			this.videoURL =url;
+			isLocalVideo=false;
+
+		}
+
 	  }
+
+	@DesignerProperty(editorType = PropertyTypeConstants.PROPERTY_TYPE_ASSET,
+			defaultValue = "")
+	@SimpleProperty(
+			description = "The \"path\" to the video.  Usually, this will be the "
+					+ "name of the video file, which should be added in the Designer.",
+			category = PropertyCategory.BEHAVIOR)
+	public void VideoLocal(String path) {
+
+		if(path!=""){
+			isLocalVideo=true;
+			videoLocalAsset=path;
+
+		}
+
+	}
 	 @SimpleFunction
 	 public void Pause()
 	 {

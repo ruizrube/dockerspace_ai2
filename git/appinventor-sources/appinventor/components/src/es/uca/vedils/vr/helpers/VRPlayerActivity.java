@@ -295,7 +295,13 @@ public class VRPlayerActivity extends Activity {
 
         @Override
         public void onLoadError(String errorMessage) {
+
             super.onLoadError(errorMessage);
+
+            final Intent onLoadErrorintent = new Intent("es.uca.vedils.vr.helpers.VRActivity.onLoadErrorintent");
+            onLoadErrorintent.putExtra("errorMessage",errorMessage);
+            LocalBroadcastManager.getInstance(VRPlayerActivity.this).sendBroadcast(onLoadErrorintent);
+
         }
 
         @Override

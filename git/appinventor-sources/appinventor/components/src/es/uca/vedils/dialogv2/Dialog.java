@@ -222,6 +222,7 @@ public class Dialog extends AndroidNonvisibleComponent implements Component {
 		}else 
 		{
 			Log.e("DIALOG", "error:  " + "NO TEXT QUERY");
+			OnErrorAnalize("NO TEXT QUERY");
 		}
 	}
 
@@ -243,6 +244,7 @@ public class Dialog extends AndroidNonvisibleComponent implements Component {
 			StringWriter errors = new StringWriter();
 			e.printStackTrace(new PrintWriter(errors));
 			Log.e("DIALOG", "error:  " + "FAIL TO INIT DIALOGFLOW SESSION"+": "+errors.toString());
+			OnErrorAnalize("FAIL TO INIT DIALOGFLOW SESSION");
 		}
 
 	}
@@ -312,7 +314,12 @@ public class Dialog extends AndroidNonvisibleComponent implements Component {
 		EventDispatcher.dispatchEvent(this, "OnErrorListening",errorType);
 
 	}
+	@SimpleEvent
+	public void OnErrorAnalize(String errorMessage) {
 
+		EventDispatcher.dispatchEvent(this, "OnErrorAnalize",errorMessage);
+
+	}
 	@RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
 	public class RequestTask extends AsyncTask<Void, Void, DetectIntentResponse> {
 

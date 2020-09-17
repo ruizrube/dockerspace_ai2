@@ -79,6 +79,15 @@ public class VRPlayer extends AndroidNonvisibleComponent implements Component, A
 		}
 
 	};
+
+	public BroadcastReceiver onLoadErrorEventBroadCastReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			String errorMessage=intent.getExtras().getString("errorMessage");
+			OnLoadError(errorMessage);
+		}
+
+	};
 	public BroadcastReceiver onNewFrameEventBroadCastReceiver = new BroadcastReceiver() {
 		@RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
 		@Override
@@ -150,12 +159,16 @@ public class VRPlayer extends AndroidNonvisibleComponent implements Component, A
 				new IntentFilter("es.uca.vedils.vr.helpers.VRActivity.onNewFrame"));
 		LocalBroadcastManager.getInstance(container.$form()).registerReceiver(onCompletionEventBroadCastReceiver,
 				new IntentFilter("es.uca.vedils.vr.helpers.VRActivity.onCompletion"));
+		LocalBroadcastManager.getInstance(container.$form()).registerReceiver(onLoadErrorEventBroadCastReceiver,
+				new IntentFilter("es.uca.vedils.vr.helpers.VRActivity.onLoadErrorintent"));
 	}
 	public void unregisterReceivers() 
 	{
 		LocalBroadcastManager.getInstance(container.$form()).unregisterReceiver(onClickEventBroadCastReceiver);
 		LocalBroadcastManager.getInstance(container.$form()).unregisterReceiver(onNewFrameEventBroadCastReceiver);
 		LocalBroadcastManager.getInstance(container.$form()).unregisterReceiver(onCompletionEventBroadCastReceiver);
+		LocalBroadcastManager.getInstance(container.$form()).unregisterReceiver(onLoadErrorEventBroadCastReceiver);
+
 	}
 
 	@SimpleProperty
@@ -231,6 +244,11 @@ public class VRPlayer extends AndroidNonvisibleComponent implements Component, A
 	@SimpleEvent
 	public void OnCompletion() {
 		EventDispatcher.dispatchEvent(this, "OnCompletion");
+
+	}
+	@SimpleEvent
+	public void OnLoadError(String errorMessage) {
+		EventDispatcher.dispatchEvent(this, "OnLoadError",errorMessage);
 
 	}
 

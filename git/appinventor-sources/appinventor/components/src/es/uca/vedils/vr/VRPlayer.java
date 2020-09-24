@@ -331,7 +331,7 @@ public class VRPlayer extends AndroidNonvisibleComponent implements Component, A
 
 		if(isLoaded){
 
-			if((minutes==0&&seconds==1)&&start_interval_seconds!=0){
+			if((minutes==0&&seconds==1)&&start_interval_seconds>0){
 				SeekTo(start_interval_minutes,start_interval_seconds);
 			}
 			if(minutes==end_interval_minutes&&seconds==end_interval_seconds){

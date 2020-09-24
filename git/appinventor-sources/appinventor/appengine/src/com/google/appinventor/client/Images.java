@@ -592,4 +592,19 @@ public interface Images extends Resources {
   @Source("com/google/appinventor/images/rectangle.png")
   ImageResource rectangle();
 
+/*
+  DockerSpace icons
+*/
+  @Source("com/google/appinventor/images/xrutils.png")
+  ImageResource xrutils();
+
+  @Source("com/google/appinventor/images/vrplayer.png")
+  ImageResource vrplayer();
+
+  @Source("com/google/appinventor/images/workflow.png")
+  ImageResource workflow();
+
+  @Source("com/google/appinventor/images/dialog.png")
+  ImageResource dialog();
+
 }

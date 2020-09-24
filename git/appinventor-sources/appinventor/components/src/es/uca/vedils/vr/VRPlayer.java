@@ -47,7 +47,7 @@ x86_64Libraries="libpano_video_renderer.so")
 	                         })
 	    })
 	})
-@DesignerComponent(version = 20200911, description = "VR360 Player", category = ComponentCategory.EXTENSION, nonVisible = true, iconName = "images/sharing.png")
+@DesignerComponent(version = 20200911, description = "VR360 Player", category = ComponentCategory.EXTENSION, nonVisible = true, iconName = "images/vrplayer.png")
 @SimpleObject(external = true)
 
 @UsesPermissions(permissionNames = "android.permission.READ_EXTERNAL_STORAGE,android.permission.WRITE_EXTERNAL_STORAGE")
@@ -60,9 +60,32 @@ public class VRPlayer extends AndroidNonvisibleComponent implements Component, A
 	private long oldSecond=0;
 	private long minutes=0;
 	private long seconds=0;
+	private long end_interval_minutes=-1;
+	private long end_interval_seconds=-1;
+	private long start_interval_minutes=-1;
+	private long start_interval_seconds=-1;
 	private boolean isLocalVideo=false;
+	private boolean isOpened=false;
+	private boolean isLoaded=false;
 
-	
+	public BroadcastReceiver onLoadSuccessEventBroadCastReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+
+			isLoaded=true;
+		}
+
+	};
+
+	/*public BroadcastReceiver onVideoIntervalEndedEventBroadCastReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+
+			OnVideoIntervalEnded();
+		}
+
+	};*/
+
 	public BroadcastReceiver onClickEventBroadCastReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
@@ -108,6 +131,7 @@ public class VRPlayer extends AndroidNonvisibleComponent implements Component, A
              //para evitar que se notifiquen dos veces el mismo segundo, se hace una comparativa entre el anterior y el nuevo notificado
              if(oldSecond!=seconds) {
 				 OnNewFrame(minutes, seconds);
+
 				 oldSecond=seconds;
 			 }
 		}
@@ -140,6 +164,7 @@ public class VRPlayer extends AndroidNonvisibleComponent implements Component, A
 
 		registerReceivers();
 		container.$context().startActivityForResult(intent,0);
+		isOpened=true;
 	}
 	@SimpleFunction(description = "Volume VRPlayer")
 	public void VolumeVRPlayer(int volume)
@@ -160,7 +185,11 @@ public class VRPlayer extends AndroidNonvisibleComponent implements Component, A
 		LocalBroadcastManager.getInstance(container.$form()).registerReceiver(onCompletionEventBroadCastReceiver,
 				new IntentFilter("es.uca.vedils.vr.helpers.VRActivity.onCompletion"));
 		LocalBroadcastManager.getInstance(container.$form()).registerReceiver(onLoadErrorEventBroadCastReceiver,
-				new IntentFilter("es.uca.vedils.vr.helpers.VRActivity.onLoadErrorintent"));
+				new IntentFilter("es.uca.vedils.vr.helpers.VRActivity.onLoadError"));
+		/*LocalBroadcastManager.getInstance(container.$form()).registerReceiver(onVideoIntervalEndedEventBroadCastReceiver,
+				new IntentFilter("es.uca.vedils.vr.helpers.VRActivity.onVideoIntervalEnded"));*/
+		LocalBroadcastManager.getInstance(container.$form()).registerReceiver(onLoadSuccessEventBroadCastReceiver,
+				new IntentFilter("es.uca.vedils.vr.helpers.VRActivity.onLoadSuccess"));
 	}
 	public void unregisterReceivers() 
 	{
@@ -168,6 +197,11 @@ public class VRPlayer extends AndroidNonvisibleComponent implements Component, A
 		LocalBroadcastManager.getInstance(container.$form()).unregisterReceiver(onNewFrameEventBroadCastReceiver);
 		LocalBroadcastManager.getInstance(container.$form()).unregisterReceiver(onCompletionEventBroadCastReceiver);
 		LocalBroadcastManager.getInstance(container.$form()).unregisterReceiver(onLoadErrorEventBroadCastReceiver);
+//		LocalBroadcastManager.getInstance(container.$form()).unregisterReceiver(onVideoIntervalEndedEventBroadCastReceiver);
+		LocalBroadcastManager.getInstance(container.$form()).unregisterReceiver(onLoadSuccessEventBroadCastReceiver);
+
+
+
 
 	}
 
@@ -204,6 +238,41 @@ public class VRPlayer extends AndroidNonvisibleComponent implements Component, A
 		}
 
 	}
+	@SimpleProperty
+	public String VideoLocal() {
+		return videoLocalAsset;
+
+	}
+
+	@SimpleProperty
+	public int Volume() {
+		audioManager = (AudioManager)container.$form().getSystemService(Context.AUDIO_SERVICE);
+		int currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+		int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+		int currentVolumePercentage = 100 * currentVolume/maxVolume;
+		return currentVolumePercentage;
+
+	}
+	@DesignerProperty(editorType = PropertyTypeConstants.PROPERTY_TYPE_INTEGER, defaultValue = "50")
+	@SimpleProperty
+	public void Volume(int volume) {
+
+		audioManager = (AudioManager)container.$form().getSystemService(Context.AUDIO_SERVICE);
+		//int currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+		int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+		float percent = volume*0.01f;
+		int percentVolume = (int) (maxVolume*percent);
+		audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, percentVolume, 0);
+
+	}
+
+	@SimpleProperty
+	public boolean IsOpened() {
+
+		return isOpened;
+
+	}
+
 	 @SimpleFunction
 	 public void Pause()
 	 {
@@ -230,7 +299,28 @@ public class VRPlayer extends AndroidNonvisibleComponent implements Component, A
 		 Intent closeVRPlayerIntent = new Intent("es.uca.vedils.vr.helpers.VRActivity.closeVideoPlayer");
 			LocalBroadcastManager.getInstance(container.$context()).sendBroadcast(closeVRPlayerIntent);
 	 }
-	
+	@SimpleFunction
+	public void PlayVideoInterval(long start_minutes, long start_seconds,long end_minutes, long end_seconds)
+	{
+		/*long start_millis=TimeUnit.SECONDS.toMillis(start_seconds+(start_minutes*60));
+		long end_millis=TimeUnit.SECONDS.toMillis(end_seconds+(end_minutes*60));
+		Intent playVideoIntervalIntent = new Intent("es.uca.vedils.vr.helpers.VRActivity.playVideoIntervalVideoPlayer");
+		playVideoIntervalIntent.putExtra("start_millis", start_millis);
+		playVideoIntervalIntent.putExtra("end_millis", end_millis);
+		LocalBroadcastManager.getInstance(container.$context()).sendBroadcast(playVideoIntervalIntent);*/
+
+		start_interval_minutes=start_minutes;
+		start_interval_seconds=start_seconds;
+		end_interval_minutes=end_minutes;
+		end_interval_seconds=end_seconds;
+
+
+		if(seconds>0 && minutes>=0) {
+			SeekTo(start_interval_minutes, start_interval_seconds);
+		}
+
+
+	}
 	 @SimpleEvent
 		public void OnClick() {
 			EventDispatcher.dispatchEvent(this, "OnClick");
@@ -238,6 +328,18 @@ public class VRPlayer extends AndroidNonvisibleComponent implements Component, A
 		}
 	 @SimpleEvent
 		public void OnNewFrame(long minutes, long seconds) {
+
+		if(isLoaded){
+
+			if((minutes==0&&seconds==1)&&start_interval_seconds!=0){
+				SeekTo(start_interval_minutes,start_interval_seconds);
+			}
+			if(minutes==end_interval_minutes&&seconds==end_interval_seconds){
+
+				OnCompletedVideoInterval();
+			}
+		}
+
 			EventDispatcher.dispatchEvent(this, "OnNewFrame",minutes,seconds);
 			
 		}
@@ -249,6 +351,16 @@ public class VRPlayer extends AndroidNonvisibleComponent implements Component, A
 	@SimpleEvent
 	public void OnLoadError(String errorMessage) {
 		EventDispatcher.dispatchEvent(this, "OnLoadError",errorMessage);
+
+	}
+	@SimpleEvent
+	public void OnCompletedVideoInterval() {
+		EventDispatcher.dispatchEvent(this, "OnCompletedVideoInterval");
+
+	}
+	@SimpleEvent
+	public void OnLoadSuccess() {
+		EventDispatcher.dispatchEvent(this, "OnLoadSuccess");
 
 	}
 

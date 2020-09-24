@@ -98,7 +98,7 @@ public class SimplePaletteItem extends DragSourcePanel {
       selectedPaletteItemWidget.getElement().getStyle().setProperty("backgroundColor", "white");
     }
     selectedPaletteItemWidget = paletteItemWidget;
-    selectedPaletteItemWidget.getElement().getStyle().setProperty("backgroundColor", "#d2e0a6");
+    selectedPaletteItemWidget.getElement().getStyle().setProperty("backgroundColor", "#e6e6e6");
   }
 
   private void addHandlers() {

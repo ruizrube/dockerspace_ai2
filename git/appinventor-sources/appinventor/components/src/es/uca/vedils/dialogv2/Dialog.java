@@ -28,7 +28,10 @@ import com.google.appinventor.components.runtime.Form;
 import com.google.appinventor.components.runtime.PermissionResultHandler;
 import com.google.appinventor.components.runtime.TextToSpeech;
 import com.google.appinventor.components.runtime.collect.Maps;
+import com.google.appinventor.components.runtime.errors.PermissionException;
+import com.google.appinventor.components.runtime.util.AsynchUtil;
 import com.google.appinventor.components.runtime.util.ErrorMessages;
+import com.google.appinventor.components.runtime.util.FileUtil;
 import com.google.appinventor.components.runtime.util.OnInitializeListener;
 import com.google.gson.JsonElement;
 import com.google.protobuf.Value;
@@ -44,11 +47,7 @@ import com.google.cloud.dialogflow.v2beta1.QueryInput;
 import com.google.cloud.dialogflow.v2beta1.SessionName;
 import com.google.cloud.dialogflow.v2beta1.SessionsClient;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import java.util.*;
 
 import com.google.api.gax.core.FixedCredentialsProvider;
@@ -64,7 +63,7 @@ import com.google.cloud.dialogflow.v2beta1.TextInput;
 import android.util.Log;
 
 @UsesLibraries(libraries = "guava-28.0-android.jar,annotations-4.1.1.4.jar,commons-logging-1.2.jar,jackson-core-2.9.9.jar,opencensus-contrib-http-util-0.21.0.jar,grpc-grpclb-1.23.0.jar,google-http-client-jackson2-1.31.0.jar,javax.annotation-api-1.3.2.jar,httpcore-4.4.11.jar,grpc-okhttp-1.23.0.jar,google-cloud-core-grpc-1.90.0.jar,google-auth-library-credentials-0.17.1.jar,google-auth-library-oauth2-http-0.17.1.jar,grpc-context-1.23.0.jar,gax-grpc-1.48.1.jar,api-common-1.8.1.jar,protobuf-java-util-3.9.1.jar,error_prone_annotations-2.3.2.jar,auto-value-annotations-1.6.6.jar,grpc-api-1.23.0.jar,failureaccess-1.0.1.jar,grpc-stub-1.23.0.jar,proto-google-cloud-dialogflow-v2beta1-0.73.0.jar,proto-google-iam-v1-0.12.0.jar,grpc-netty-shaded-1.23.0.jar,proto-google-common-protos-1.16.0.jar,listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar,commons-codec-1.11.jar,protobuf-java-3.9.1.jar,okhttp-2.5.0.jar,grpc-auth-1.23.0.jar,grpc-alts-1.23.0.jar,google-cloud-dialogflow-0.108.0-alpha.jar,httpclient-4.5.9.jar,j2objc-annotations-1.3.jar,google-cloud-core-1.90.0.jar,gson-2.7.jar,checker-compat-qual-2.5.5.jar,threetenbp-1.3.3.jar,grpc-core-1.23.0.jar,opencensus-api-0.21.0.jar,google-http-client-beta.jar,animal-sniffer-annotations-1.17.jar,grpc-protobuf-1.23.0.jar,grpc-protobuf-lite-1.23.0.jar,jsr305-3.0.2.jar,opencensus-contrib-grpc-metrics-0.21.0.jar,okio-1.13.0.jar,proto-google-cloud-dialogflow-v2-0.73.0.jar,perfmark-api-0.17.0.jar,commons-lang3-3.5.jar,gax-1.48.1.jar")
-@DesignerComponent(version = 201910910, description = "Component for using a conversational agent", category = ComponentCategory.EXTENSION, nonVisible = true, iconName = "images/speechRecognizer.png")
+@DesignerComponent(version = 201910910, description = "Component for using a conversational agent", category = ComponentCategory.EXTENSION, nonVisible = true, iconName = "images/dialog.png")
 @UsesPermissions(permissionNames = "android.permission.INTERNET, android.permission.RECORD_AUDIO")
 @SimpleObject(external = true)
 public class Dialog extends AndroidNonvisibleComponent implements Component {
@@ -78,6 +77,7 @@ public class Dialog extends AndroidNonvisibleComponent implements Component {
 	private Map<String, Value> fieldsMap;
 	private String language;
 	private static final Map<String, Locale> iso3LanguageToLocaleMap = Maps.newHashMap();
+	private boolean isListening=false;
 
 
 
@@ -177,6 +177,13 @@ public class Dialog extends AndroidNonvisibleComponent implements Component {
 
 	}
 
+	@SimpleProperty
+	public boolean IsListening() {
+
+		return isListening;
+
+	}
+
 	@DesignerProperty(editorType = PropertyTypeConstants.PROPERTY_TYPE_ASSET, defaultValue = "")
 	@SimpleProperty
 	public void Credentials(String path) {
@@ -194,6 +201,8 @@ public class Dialog extends AndroidNonvisibleComponent implements Component {
 		mSpeechManager= new SpeechRecognizerNewManager(container.$form(),language);
 		mSpeechManager.startListening();
 
+		isListening=true;
+
 
 		
 	}
@@ -205,6 +214,7 @@ public class Dialog extends AndroidNonvisibleComponent implements Component {
 
 		unregisterReceivers();
 		mSpeechManager.destroyObject();
+		isListening=false;
 
 
 	}
@@ -222,30 +232,42 @@ public class Dialog extends AndroidNonvisibleComponent implements Component {
 		}else 
 		{
 			Log.e("DIALOG", "error:  " + "NO TEXT QUERY");
-			OnErrorAnalize("NO TEXT QUERY");
+			OnErrorAnalyzing("NO TEXT QUERY");
 		}
 	}
 
 	@SimpleFunction
-	public void InitSession(String path) {
+	public void InitSession() {
 
-		try {
+		form.askPermission(Manifest.permission.RECORD_AUDIO, new PermissionResultHandler() {
+			@Override
+			public void HandlePermissionResponse(String permission, boolean granted) {
+				if (granted) {
+					try {
 
-			InputStream stream = container.$form().getAssets().open(path);
-			GoogleCredentials credentials = GoogleCredentials.fromStream(stream);
-			String projectId = ((ServiceAccountCredentials) credentials).getProjectId();
-			SessionsSettings.Builder settingsBuilder = SessionsSettings.newBuilder();
-			SessionsSettings sessionsSettings = settingsBuilder
-					.setCredentialsProvider(FixedCredentialsProvider.create(credentials)).build();
-			sessionsClient = SessionsClient.create(sessionsSettings);
-			session = SessionName.of(projectId, uuid);
+						InputStream stream = container.$form().getAssets().open(path);
+						GoogleCredentials credentials = GoogleCredentials.fromStream(stream);
+						String projectId = ((ServiceAccountCredentials) credentials).getProjectId();
+						SessionsSettings.Builder settingsBuilder = SessionsSettings.newBuilder();
+						SessionsSettings sessionsSettings = settingsBuilder
+								.setCredentialsProvider(FixedCredentialsProvider.create(credentials)).build();
+						sessionsClient = SessionsClient.create(sessionsSettings);
+						session = SessionName.of(projectId, uuid);
 
-		} catch (Exception e) {
-			StringWriter errors = new StringWriter();
-			e.printStackTrace(new PrintWriter(errors));
-			Log.e("DIALOG", "error:  " + "FAIL TO INIT DIALOGFLOW SESSION"+": "+errors.toString());
-			OnErrorAnalize("FAIL TO INIT DIALOGFLOW SESSION");
-		}
+					} catch (Exception e) {
+						StringWriter errors = new StringWriter();
+						e.printStackTrace(new PrintWriter(errors));
+						Log.e("DIALOG", "error:  " + "FAIL TO INIT DIALOGFLOW SESSION"+": "+errors.toString());
+						OnErrorAnalyzing("FAIL TO INIT DIALOGFLOW SESSION");
+					}
+				} else {
+					form.dispatchPermissionDeniedEvent(es.uca.vedils.dialogv2.Dialog.this, "InitSession", permission);
+
+					//form.dispatchPermissionDeniedEvent(com.google.appinventor.components.runtime.File.this, "ReadFrom", permission);
+				}
+			}
+		});
+
 
 	}
 
@@ -305,6 +327,7 @@ public class Dialog extends AndroidNonvisibleComponent implements Component {
 	@SimpleEvent
 	public void OnFinishListening(String response) {
 		EventDispatcher.dispatchEvent(this, "OnFinishListening",response);
+		isListening=false;
 
 	}
 
@@ -312,10 +335,11 @@ public class Dialog extends AndroidNonvisibleComponent implements Component {
 	public void OnErrorListening(String errorType) {
 
 		EventDispatcher.dispatchEvent(this, "OnErrorListening",errorType);
+		isListening=false;
 
 	}
 	@SimpleEvent
-	public void OnErrorAnalize(String errorMessage) {
+	public void OnErrorAnalyzing(String errorMessage) {
 
 		EventDispatcher.dispatchEvent(this, "OnErrorAnalize",errorMessage);
 

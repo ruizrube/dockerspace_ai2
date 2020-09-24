@@ -164,6 +164,11 @@ public final class SimpleComponentDescriptor {
     bundledImages.put("images/linestring.png", images.linestring());
     bundledImages.put("images/polygon.png", images.polygon());
     bundledImages.put("images/featurecollection.png", images.featurecollection());
+//DockerSpace icons
+    bundledImages.put("images/xrutils.png", images.xrutils());
+    bundledImages.put("images/vrplayer.png", images.vrplayer());
+    bundledImages.put("images/workflow.png", images.workflow());
+    bundledImages.put("images/dialog.png", images.dialog());
 
     imagesInitialized = true;
   }

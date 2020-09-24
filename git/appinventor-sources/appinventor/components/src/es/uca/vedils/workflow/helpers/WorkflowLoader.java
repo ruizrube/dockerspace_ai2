@@ -109,70 +109,85 @@ public class WorkflowLoader {
 			List<Object> list=new ArrayList();
 			
 			// Starts by looking for the entry tag
-			if (nodeType.equals("startEvent")) {
-				Log.d("Workflow", "Reading node...startEvent");
-				aux.getNodes().put(id, new WorkflowNode(id, name, "EVENT", "START", list));
-				readNode(parser);
-			} else if (nodeType.equals("endEvent")) {
-				Log.d("Workflow", "Reading node...endEvent");
-				aux.getNodes().put(id, new WorkflowNode(id, name, "EVENT", "END", list));
-				readNode(parser);
-			} else if (nodeType.equals("scriptTask")) {
-				String text=readDocumentation(parser);
-				list.add(text);
-				Log.d("Workflow", "Reading node...scriptTask. " + name + ". Argument: " + text);
-				aux.getNodes().put(id, new WorkflowNode(id, name, "TASK", "SCRIPT TASK",list));
-				//readNode(parser);
-			} else if (nodeType.equals("serviceTask")) {
-				String uri=readDocumentation(parser);
-				list.add(uri);
-				Log.d("Workflow", "Reading node...serviceTask. " + name + ". Argument: " + uri);
-				aux.getNodes().put(id, new WorkflowNode(id, name, "TASK", "SERVICE TASK",list));
-				//readNode(parser);
-			} else if (nodeType.equals("userTask")) {
-				String parameter=readDocumentation(parser);
-				list.add(parameter);
-				Log.d("Workflow", "Reading node...userTask. " + name + ". Argument: " + parameter);
-				aux.getNodes().put(id, new WorkflowNode(id, name,  "TASK", "USER TASK", list));
-				//readNode(parser);
-			} else if (nodeType.equals("manualTask")) {
-				String message=readDocumentation(parser);
-				list.add(message);
-				Log.d("Workflow", "Reading node...manualTask. " + name + ". Argument: " + message);
-				aux.getNodes().put(id, new WorkflowNode(id, name,  "TASK", "MANUAL TASK", list));
-				//readNode(parser);
-			} else if (nodeType.equals("task")) {
-				String parameter=readDocumentation(parser);
-				list.add(parameter);
-				Log.d("Workflow", "Reading node...task. " + name + ". Argument: " + parameter);
-				aux.getNodes().put(id, new WorkflowNode(id, name,  "TASK", "TASK", list));
-				//readNode(parser);
-			} else if (nodeType.equals("exclusiveGateway")) {
-				Log.d("Workflow", "Reading node...exclusiveGateway");
-				aux.getNodes().put(id, new WorkflowNode(id, name, "GATEWAY", "XOR", list));
-				readNode(parser);
-			} else if (nodeType.equals("inclusiveGateway")) {
-				Log.d("Workflow", "Reading node...inclusiveGateway");
-				aux.getNodes().put(id, new WorkflowNode(id, name, "GATEWAY", "OR", list));
-				readNode(parser);
-			} else if (nodeType.equals("parallelGateway")) {
-				Log.d("Workflow", "Reading node...parallelGateway");
-				aux.getNodes().put(id, new WorkflowNode(id, name, "GATEWAY", "AND", list));
-				readNode(parser);
-			} else if (nodeType.equals("sequenceFlow")) {
-				String sourceNode = parser.getAttributeValue(null, "sourceRef");
-				String targetNode = parser.getAttributeValue(null, "targetRef");
-				String condition=readCondition(parser);
-				
-				Log.d("Workflow", "Reading node...sequenceFlow. "+sourceNode + " --> "+targetNode + ". Condition: "+condition);
-				//WorkflowNode source = aux.getNodes().get(sourceNode);
-				//WorkflowNode target = aux.getNodes().get(targetNode);
-				aux.getTransitions().add(new WorkflowTransition(sourceNode, targetNode, condition));
-				//readNode(parser);
+			switch (nodeType) {
+				case "startEvent":
+					Log.d("Workflow", "Reading node...startEvent");
+					aux.getNodes().put(id, new WorkflowNode(id, name, "EVENT", "START", list));
+					readNode(parser);
+					break;
+				case "endEvent":
+					Log.d("Workflow", "Reading node...endEvent");
+					aux.getNodes().put(id, new WorkflowNode(id, name, "EVENT", "END", list));
+					readNode(parser);
+					break;
+				case "scriptTask":
+					String text = readDocumentation(parser);
+					list.add(text);
+					Log.d("Workflow", "Reading node...scriptTask. " + name + ". Argument: " + text);
+					aux.getNodes().put(id, new WorkflowNode(id, name, "TASK", "SCRIPT TASK", list));
+					//readNode(parser);
+					break;
+				case "serviceTask":
+					String uri = readDocumentation(parser);
+					list.add(uri);
+					Log.d("Workflow", "Reading node...serviceTask. " + name + ". Argument: " + uri);
+					aux.getNodes().put(id, new WorkflowNode(id, name, "TASK", "SERVICE TASK", list));
+					//readNode(parser);
+					break;
+				case "userTask": {
+					String parameter = readDocumentation(parser);
+					list.add(parameter);
+					Log.d("Workflow", "Reading node...userTask. " + name + ". Argument: " + parameter);
+					aux.getNodes().put(id, new WorkflowNode(id, name, "TASK", "USER TASK", list));
+					//readNode(parser);
+					break;
+				}
+				case "manualTask":
+					String message = readDocumentation(parser);
+					list.add(message);
+					Log.d("Workflow", "Reading node...manualTask. " + name + ". Argument: " + message);
+					aux.getNodes().put(id, new WorkflowNode(id, name, "TASK", "MANUAL TASK", list));
+					//readNode(parser);
+					break;
+				case "task": {
+					String parameter = readDocumentation(parser);
+					list.add(parameter);
+					Log.d("Workflow", "Reading node...task. " + name + ". Argument: " + parameter);
+					aux.getNodes().put(id, new WorkflowNode(id, name, "TASK", "TASK", list));
+					//readNode(parser);
+					break;
+				}
+				case "exclusiveGateway":
+					Log.d("Workflow", "Reading node...exclusiveGateway");
+					aux.getNodes().put(id, new WorkflowNode(id, name, "GATEWAY", "XOR", list));
+					readNode(parser);
+					break;
+				case "inclusiveGateway":
+					Log.d("Workflow", "Reading node...inclusiveGateway");
+					aux.getNodes().put(id, new WorkflowNode(id, name, "GATEWAY", "OR", list));
+					readNode(parser);
+					break;
+				case "parallelGateway":
+					Log.d("Workflow", "Reading node...parallelGateway");
+					aux.getNodes().put(id, new WorkflowNode(id, name, "GATEWAY", "AND", list));
+					readNode(parser);
+					break;
+				case "sequenceFlow":
+					String sourceNode = parser.getAttributeValue(null, "sourceRef");
+					String targetNode = parser.getAttributeValue(null, "targetRef");
+					String condition = readCondition(parser);
 
-				
-			} else {
-				skip(parser);
+					Log.d("Workflow", "Reading node...sequenceFlow. " + sourceNode + " --> " + targetNode + ". Condition: " + condition);
+					//WorkflowNode source = aux.getNodes().get(sourceNode);
+					//WorkflowNode target = aux.getNodes().get(targetNode);
+					aux.getTransitions().add(new WorkflowTransition(sourceNode, targetNode, condition));
+					//readNode(parser);
+
+
+					break;
+				default:
+					skip(parser);
+					break;
 			}
 
 		}

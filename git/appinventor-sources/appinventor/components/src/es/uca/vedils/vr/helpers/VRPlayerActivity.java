@@ -1,5 +1,6 @@
 package es.uca.vedils.vr.helpers;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -45,9 +46,30 @@ public class VRPlayerActivity extends Activity {
     private String mYoutubeVideoID = "";
     private String mVideoURL = "";
     private String mVideoLocalAsset = "";
+    private  long start_millis=-1;
+    private long end_millis=-1;
 
-    
-    
+
+
+    /*public BroadcastReceiver playVideoIntervalBroadCastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+             start_millis=intent.getExtras().getLong("start_millis");
+             end_millis=intent.getExtras().getLong("end_millis");
+
+            if(start_millis<mVrVideoView.getDuration()) {
+                mVrVideoView.seekTo(start_millis);
+                mVrVideoView.playVideo();
+            }
+
+
+
+
+        }
+
+    };*/
+
     public BroadcastReceiver pauseVideoBroadCastReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
@@ -75,6 +97,7 @@ public class VRPlayerActivity extends Activity {
 			long millis=intent.getExtras().getLong("millis");
 			if(millis<mVrVideoView.getDuration()) {
 		    mVrVideoView.seekTo(millis);
+
 		    mVrVideoView.playVideo();
 			}
 			
@@ -99,6 +122,7 @@ public class VRPlayerActivity extends Activity {
             VRPlayerActivity.this.finish();
         }
     };
+
 
     @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
     @Override
@@ -154,6 +178,8 @@ public class VRPlayerActivity extends Activity {
         LocalBroadcastManager.getInstance((Context)this).registerReceiver(this.seektoVideoBroadCastReceiver, new IntentFilter("es.uca.vedils.vr.helpers.VRActivity.seektoVideoPlayer"));
         LocalBroadcastManager.getInstance((Context)this).registerReceiver(this.closeVideoPlayerBroadCastReceiver, new IntentFilter("es.uca.vedils.vr.helpers.VRActivity.closeVideoPlayer"));
         LocalBroadcastManager.getInstance((Context)this).registerReceiver(this.setVolumeBroadCastReceiver, new IntentFilter("es.uca.vedils.vr.helpers.VRActivity.setVolumeVideoPlayer"));
+       // LocalBroadcastManager.getInstance((Context)this).registerReceiver(this.playVideoIntervalBroadCastReceiver, new IntentFilter("es.uca.vedils.vr.helpers.VRActivity.playVideoIntervalVideoPlayer"));
+
 
         registersActive=true;
     }
@@ -164,8 +190,10 @@ public class VRPlayerActivity extends Activity {
          LocalBroadcastManager.getInstance((Context)this).unregisterReceiver(this.seektoVideoBroadCastReceiver);
          LocalBroadcastManager.getInstance((Context)this).unregisterReceiver(this.closeVideoPlayerBroadCastReceiver);
         LocalBroadcastManager.getInstance((Context)this).unregisterReceiver(this.setVolumeBroadCastReceiver);
+        //LocalBroadcastManager.getInstance((Context)this).unregisterReceiver(this.playVideoIntervalBroadCastReceiver);
 
-         registersActive=false;
+
+        registersActive=false;
     	
     }
     
@@ -282,6 +310,7 @@ public class VRPlayerActivity extends Activity {
 
         mVrVideoView.seekTo(progress);
 
+
     }
 
 
@@ -291,6 +320,9 @@ public class VRPlayerActivity extends Activity {
         public void onLoadSuccess() {
             super.onLoadSuccess();
 
+            final Intent onLoadSuccessintent = new Intent("es.uca.vedils.vr.helpers.VRActivity.onLoadSuccess");
+            LocalBroadcastManager.getInstance(VRPlayerActivity.this).sendBroadcast(onLoadSuccessintent);
+
         }
 
         @Override
@@ -298,7 +330,7 @@ public class VRPlayerActivity extends Activity {
 
             super.onLoadError(errorMessage);
 
-            final Intent onLoadErrorintent = new Intent("es.uca.vedils.vr.helpers.VRActivity.onLoadErrorintent");
+            final Intent onLoadErrorintent = new Intent("es.uca.vedils.vr.helpers.VRActivity.onLoadError");
             onLoadErrorintent.putExtra("errorMessage",errorMessage);
             LocalBroadcastManager.getInstance(VRPlayerActivity.this).sendBroadcast(onLoadErrorintent);
 
@@ -338,6 +370,12 @@ public class VRPlayerActivity extends Activity {
             final Intent onNewFrameintent = new Intent("es.uca.vedils.vr.helpers.VRActivity.onNewFrame");
             onNewFrameintent.putExtra("currentPosition",mVrVideoView.getCurrentPosition());
             LocalBroadcastManager.getInstance(VRPlayerActivity.this).sendBroadcast(onNewFrameintent);
+
+            /*if(end_millis==mVrVideoView.getCurrentPosition()){
+
+                final Intent onVideoIntervalEndedintent = new Intent("es.uca.vedils.vr.helpers.VRActivity.onVideoIntervalEnded");
+                LocalBroadcastManager.getInstance(VRPlayerActivity.this).sendBroadcast(onVideoIntervalEndedintent);
+            }*/
 
         }
 

@@ -66,7 +66,7 @@ public class TopPanel extends Composite {
   private static final String WIDGET_NAME_LANGUAGE = "Language";
 
   private static final String SIGNOUT_URL = "/ode/_logout";
-  private static final String LOGO_IMAGE_URL = "/images/codi_long.png";
+  private static final String LOGO_IMAGE_URL = "/images/codi_long_new.png";
   private static final String LANGUAGES_IMAGE_URL = "/images/languages.svg";
 
   private static final String WINDOW_OPEN_FEATURES = "menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes";

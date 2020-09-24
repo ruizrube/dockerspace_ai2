@@ -51,7 +51,7 @@ import es.uca.vedils.workflow.helpers.WorkflowTransition;
  */
 
 @UsesLibraries(libraries = "bsh-2.0b4.jar")
-@DesignerComponent(version = 201910724, description = "Component for using a workflow during the execution of the app", category = ComponentCategory.EXTENSION, nonVisible = true, iconName = "images/sharing.png")
+@DesignerComponent(version = 201910724, description = "Component for using a workflow during the execution of the app", category = ComponentCategory.EXTENSION, nonVisible = true, iconName = "images/workflow.png")
 @SimpleObject(external = true)
 
 @UsesPermissions(permissionNames = "android.permission.READ_EXTERNAL_STORAGE,android.permission.WRITE_EXTERNAL_STORAGE")

@@ -5,6 +5,8 @@
 
 package com.google.appinventor.components.runtime;
 
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import com.google.appinventor.components.runtime.util.ErrorMessages;
 
 import android.content.Intent;
@@ -14,6 +16,7 @@ import android.speech.SpeechRecognizer;
 
 import java.util.ArrayList;
 
+@RequiresApi(api = Build.VERSION_CODES.FROYO)
 public class ServiceBasedSpeechRecognizer extends SpeechRecognizerController
     implements RecognitionListener {
 

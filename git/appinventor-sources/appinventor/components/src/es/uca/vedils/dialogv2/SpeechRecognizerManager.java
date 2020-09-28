@@ -77,6 +77,7 @@ public class SpeechRecognizerManager {
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.FROYO)
     private void startListening()
     {
         if(!mIsListening)
@@ -97,6 +98,7 @@ public class SpeechRecognizerManager {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.FROYO)
     public void destroy()
     {
         mIsListening=false;
@@ -119,6 +121,7 @@ public class SpeechRecognizerManager {
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.FROYO)
     protected class SpeechRecognitionListener implements RecognitionListener
     {
 

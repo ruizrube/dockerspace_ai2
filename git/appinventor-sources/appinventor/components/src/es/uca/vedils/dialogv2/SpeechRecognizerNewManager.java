@@ -38,6 +38,7 @@ public class SpeechRecognizerNewManager implements RecognitionListener {
         //todo poner una limitacion a que no se ejecute el startListening mientras haya otra en curso
         oneResult=true;
         speech.startListening(intent);
+
     }
     public void destroyObject()
     {
@@ -119,6 +120,8 @@ public class SpeechRecognizerNewManager implements RecognitionListener {
         onResults.putExtra("speechResult",matches.get(0));
         LocalBroadcastManager.getInstance(mContext).sendBroadcast(onResults);
             oneResult=false;
+
+            speech.stopListening();
 
         }
 

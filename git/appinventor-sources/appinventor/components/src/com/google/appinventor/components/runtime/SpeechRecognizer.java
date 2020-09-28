@@ -47,7 +47,8 @@ public class SpeechRecognizer extends AndroidNonvisibleComponent
   private SpeechRecognizerController speechRecognizerController;
 
   private boolean havePermission = false;
-  private boolean useLegacy = true;
+  private boolean useLegacy = false;
+  private boolean handsFree=false;
 
   /**
    * Creates a SpeechRecognizer component.
@@ -59,9 +60,12 @@ public class SpeechRecognizer extends AndroidNonvisibleComponent
     container.$form().registerForOnClear(this);
     this.container = container;
     result = "";
-    recognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+    //recognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+    /*recognizerIntent = new Intent(RecognizerIntent.ACTION_VOICE_SEARCH_HANDS_FREE);
+    recognizerIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,container.$context().getPackageName());
     recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-    recognizerIntent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true);
+    recognizerIntent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true);*/
+    HandsFree(handsFree);
     UseLegacy(useLegacy);
   }
 
@@ -179,8 +183,36 @@ public class SpeechRecognizer extends AndroidNonvisibleComponent
     return useLegacy;
   }
 
+  @SimpleProperty(
+          category = PropertyCategory.BEHAVIOR,
+          description = "If true, use handsfree.")
+  public boolean HandsFree() {
+    return handsFree;
+  }
+
   @DesignerProperty(editorType = PropertyTypeConstants.PROPERTY_TYPE_BOOLEAN,
-      defaultValue = "True")
+          defaultValue = "True")
+  @SimpleProperty(description = "If true, a separate dialog is used to recognize speech. "
+          + "If false, speech is recognized without changing the user interface and "
+          + "partial results are also provided.")
+  public void HandsFree(boolean handsFree) {
+    this.handsFree = handsFree;
+
+    if (handsFree == true ) {
+
+      recognizerIntent = new Intent(RecognizerIntent.ACTION_VOICE_SEARCH_HANDS_FREE);
+
+    }else{
+      recognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+    }
+
+    recognizerIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,container.$context().getPackageName());
+   // recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+    //recognizerIntent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true);
+  }
+
+  @DesignerProperty(editorType = PropertyTypeConstants.PROPERTY_TYPE_BOOLEAN,
+      defaultValue = "False")
   @SimpleProperty(description = "If true, a separate dialog is used to recognize speech. "
       + "If false, speech is recognized without changing the user interface and "
       + "partial results are also provided.")

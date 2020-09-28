@@ -46,30 +46,30 @@ public class VRPlayerActivity extends Activity {
     private String mYoutubeVideoID = "";
     private String mVideoURL = "";
     private String mVideoLocalAsset = "";
-    private  long start_millis=-1;
-    private long end_millis=-1;
 
 
 
-    /*public BroadcastReceiver playVideoIntervalBroadCastReceiver = new BroadcastReceiver() {
+    public BroadcastReceiver changeVideoSourceBroadCastReceiver = new BroadcastReceiver() {
+        @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
         @Override
         public void onReceive(Context context, Intent intent) {
 
-             start_millis=intent.getExtras().getLong("start_millis");
-             end_millis=intent.getExtras().getLong("end_millis");
+            isLocalVideo = intent.getExtras().getBoolean("isLocalVideo");
 
-            if(start_millis<mVrVideoView.getDuration()) {
-                mVrVideoView.seekTo(start_millis);
-                mVrVideoView.playVideo();
+            if(!isLocalVideo){
+
+                mVideoURL = intent.getExtras().getString("mVideoURL");
+            }else{
+
+                mVideoLocalAsset = intent.getExtras().getString("mVideoLocalAsset");
             }
 
-
+            setVideoSources();
 
 
         }
 
-    };*/
-
+    };
     public BroadcastReceiver pauseVideoBroadCastReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
@@ -119,12 +119,15 @@ public class VRPlayerActivity extends Activity {
     };
 	public BroadcastReceiver closeVideoPlayerBroadCastReceiver = new BroadcastReceiver() {
         public void onReceive(final Context context, final Intent intent) {
+
+
+           // mVrVideoView.shutdown();
             VRPlayerActivity.this.finish();
         }
     };
 
 
-    @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
+    @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -132,7 +135,13 @@ public class VRPlayerActivity extends Activity {
 
         getExtraIntent();
         initViews();
+        setVideoSources();
 
+
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
+    public void setVideoSources(){
         if(isLocalVideo){
             //carga local
             initVideo(mVideoLocalAsset);
@@ -147,16 +156,12 @@ public class VRPlayerActivity extends Activity {
                     }
 
                 }else{
-                    //todo cargar video url que no viene de youtube
+
                     initVideo(mVideoURL);
                 }
             }
         }
-
-
-
     }
-
     public void getExtraIntent() {
      
      this.extras = this.getIntent().getExtras();
@@ -178,7 +183,7 @@ public class VRPlayerActivity extends Activity {
         LocalBroadcastManager.getInstance((Context)this).registerReceiver(this.seektoVideoBroadCastReceiver, new IntentFilter("es.uca.vedils.vr.helpers.VRActivity.seektoVideoPlayer"));
         LocalBroadcastManager.getInstance((Context)this).registerReceiver(this.closeVideoPlayerBroadCastReceiver, new IntentFilter("es.uca.vedils.vr.helpers.VRActivity.closeVideoPlayer"));
         LocalBroadcastManager.getInstance((Context)this).registerReceiver(this.setVolumeBroadCastReceiver, new IntentFilter("es.uca.vedils.vr.helpers.VRActivity.setVolumeVideoPlayer"));
-       // LocalBroadcastManager.getInstance((Context)this).registerReceiver(this.playVideoIntervalBroadCastReceiver, new IntentFilter("es.uca.vedils.vr.helpers.VRActivity.playVideoIntervalVideoPlayer"));
+        LocalBroadcastManager.getInstance((Context)this).registerReceiver(this.changeVideoSourceBroadCastReceiver, new IntentFilter("es.uca.vedils.vr.helpers.VRActivity.changeVideoSource"));
 
 
         registersActive=true;
@@ -190,7 +195,8 @@ public class VRPlayerActivity extends Activity {
          LocalBroadcastManager.getInstance((Context)this).unregisterReceiver(this.seektoVideoBroadCastReceiver);
          LocalBroadcastManager.getInstance((Context)this).unregisterReceiver(this.closeVideoPlayerBroadCastReceiver);
         LocalBroadcastManager.getInstance((Context)this).unregisterReceiver(this.setVolumeBroadCastReceiver);
-        //LocalBroadcastManager.getInstance((Context)this).unregisterReceiver(this.playVideoIntervalBroadCastReceiver);
+        LocalBroadcastManager.getInstance((Context)this).unregisterReceiver(this.changeVideoSourceBroadCastReceiver);
+
 
 
         registersActive=false;
@@ -321,6 +327,7 @@ public class VRPlayerActivity extends Activity {
             super.onLoadSuccess();
 
             final Intent onLoadSuccessintent = new Intent("es.uca.vedils.vr.helpers.VRActivity.onLoadSuccess");
+            onLoadSuccessintent.putExtra("duration",mVrVideoView.getDuration());
             LocalBroadcastManager.getInstance(VRPlayerActivity.this).sendBroadcast(onLoadSuccessintent);
 
         }
@@ -353,8 +360,9 @@ public class VRPlayerActivity extends Activity {
 
             super.onCompletion();
 
-            final Intent onCompletionintent = new Intent("es.uca.vedils.vr.helpers.VRActivity.onCompletion");
-            LocalBroadcastManager.getInstance(VRPlayerActivity.this).sendBroadcast(onCompletionintent);
+            //Cuando cambio las fuentes del video y vuelve a reproducirse, este evento no notifica correctamente el final del video
+            //la logica del final de un video se ha llevado a VRPlayer
+
 
 
         }
@@ -371,11 +379,6 @@ public class VRPlayerActivity extends Activity {
             onNewFrameintent.putExtra("currentPosition",mVrVideoView.getCurrentPosition());
             LocalBroadcastManager.getInstance(VRPlayerActivity.this).sendBroadcast(onNewFrameintent);
 
-            /*if(end_millis==mVrVideoView.getCurrentPosition()){
-
-                final Intent onVideoIntervalEndedintent = new Intent("es.uca.vedils.vr.helpers.VRActivity.onVideoIntervalEnded");
-                LocalBroadcastManager.getInstance(VRPlayerActivity.this).sendBroadcast(onVideoIntervalEndedintent);
-            }*/
 
         }
 

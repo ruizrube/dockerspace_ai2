@@ -73,53 +73,15 @@ public class Dialog extends AndroidNonvisibleComponent implements Component {
 	private String path;
 	private String uuid = UUID.randomUUID().toString();
 	private final ComponentContainer container;
-	private SpeechRecognizerNewManager mSpeechManager;
 	private Map<String, Value> fieldsMap;
 	private String language;
 	private static final Map<String, Locale> iso3LanguageToLocaleMap = Maps.newHashMap();
-	private boolean isListening=false;
 
 
-
-	public BroadcastReceiver onErrorEventBroadCastReceiver = new BroadcastReceiver() {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-
-			String errorType=intent.getExtras().getString("errorType");
-			OnErrorListening(errorType);
-
-		}
-
-	};
-	public BroadcastReceiver onResultsEventBroadCastReceiver = new BroadcastReceiver() {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-
-			String speechResult=intent.getExtras().getString("speechResult");
-			OnFinishListening(speechResult);
-
-		}
-
-	};
 
 	public Dialog(ComponentContainer container) {
 		super(container.$form());
 		this.container = container;
-
-	}
-
-	public void registerReceivers()
-	{
-		LocalBroadcastManager.getInstance(container.$form()).registerReceiver(onErrorEventBroadCastReceiver,
-				new IntentFilter("es.uca.vedils.dialogv2.SpeechRecognizerManager.onError"));
-		LocalBroadcastManager.getInstance(container.$form()).registerReceiver(onResultsEventBroadCastReceiver,
-				new IntentFilter("es.uca.vedils.dialogv2.SpeechRecognizerManager.onResults"));
-
-	}
-	public void unregisterReceivers()
-	{
-		LocalBroadcastManager.getInstance(container.$form()).unregisterReceiver(onErrorEventBroadCastReceiver);
-		LocalBroadcastManager.getInstance(container.$form()).unregisterReceiver(onResultsEventBroadCastReceiver);
 
 	}
 
@@ -177,13 +139,6 @@ public class Dialog extends AndroidNonvisibleComponent implements Component {
 
 	}
 
-	@SimpleProperty
-	public boolean IsListening() {
-
-		return isListening;
-
-	}
-
 	@DesignerProperty(editorType = PropertyTypeConstants.PROPERTY_TYPE_ASSET, defaultValue = "")
 	@SimpleProperty
 	public void Credentials(String path) {
@@ -191,33 +146,6 @@ public class Dialog extends AndroidNonvisibleComponent implements Component {
 		this.path = path;
 	}
 
-	@RequiresApi(api = Build.VERSION_CODES.FROYO)
-	@SimpleFunction
-	public void StartListening()
-
-	{
-
-		registerReceivers();
-		mSpeechManager= new SpeechRecognizerNewManager(container.$form(),language);
-		mSpeechManager.startListening();
-
-		isListening=true;
-
-
-		
-	}
-	@RequiresApi(api = Build.VERSION_CODES.FROYO)
-	@SimpleFunction
-	public void StopListening()
-
-	{
-
-		unregisterReceivers();
-		mSpeechManager.destroyObject();
-		isListening=false;
-
-
-	}
 
 	@RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
 	@SimpleFunction
@@ -240,9 +168,11 @@ public class Dialog extends AndroidNonvisibleComponent implements Component {
 	public void InitSession() {
 
 		form.askPermission(Manifest.permission.RECORD_AUDIO, new PermissionResultHandler() {
+			@RequiresApi(api = Build.VERSION_CODES.FROYO)
 			@Override
 			public void HandlePermissionResponse(String permission, boolean granted) {
 				if (granted) {
+					//mSpeechManager= new SpeechRecognizerNewManager(container.$form(),language);
 					try {
 
 						InputStream stream = container.$form().getAssets().open(path);
@@ -275,73 +205,58 @@ public class Dialog extends AndroidNonvisibleComponent implements Component {
 		String action = response.getQueryResult().getAction();
 		//String fulfillment = response.getQueryResult().getFulfillmentText();
 		String query = response.getQueryResult().getQueryText();
-		/*boolean hasParameters=response.getQueryResult().hasParameters();
-		
-		if(response.getQueryResult().hasParameters()) {
-		fieldsMap = response.getQueryResult().getParameters().getFieldsMap();
-		}*/
 
-		//////////////////////////////////////////////////
-// Action paramaters
-		List<List<String>> params = new ArrayList<List<String>>();
-		List<String> aux = new ArrayList<String>();
+		List<List<Object>> params = new ArrayList<>();
+		List<Object> aux = new ArrayList<Object>();
 
 		if (response.getQueryResult().getParameters() != null
 				&& !response.getQueryResult().getParameters().getFieldsMap().isEmpty()) {
 			for (final Map.Entry<String, Value> entry : response.getQueryResult().getParameters().getFieldsMap().entrySet()) {
 
-				aux = new ArrayList<String>();
+				aux = new ArrayList<>();
 
 				aux.add(entry.getKey());
+ 				//todo comprobar si el valor el texto o numero, cuando es numero y lo intento capturar como texto,falla
+				Log.e("VALUE:", String.valueOf(entry.getValue().getNumberValue()));
+				//todo con estas dos lineas de abajo puedo saber el tipo de value que es, haciendo un switch case, se seguro como tipar
+				//correctamente el getValue()
+			/*	entry.getValue().getKindCase().getNumber()
+						Value.NUMBER_VALUE_FIELD_NUMBER*/
 
-				aux.add(entry.getValue().getStringValue());
+				switch (entry.getValue().getKindCase().getNumber()){
+
+					case Value.NUMBER_VALUE_FIELD_NUMBER:
+						aux.add(entry.getValue().getNumberValue());
+						break;
+					case Value.STRING_VALUE_FIELD_NUMBER:
+						aux.add(entry.getValue().getStringValue());
+						break;
+					case Value.BOOL_VALUE_FIELD_NUMBER:
+						aux.add(entry.getValue().getBoolValue());
+						break;
+
+				}
+
 
 				params.add(aux);
 			}
 		}
-		///////////////////////////////////////////////////////////
+
 		OnAnalizeResponse(action,query,params);
 
 	}
 
-	/*@SimpleFunction
-	public String GetParameterFromResponse(String key) {
-		
-		String parameterValue="";
-		try 
-		{
-			parameterValue=fieldsMap.get(key).getStringValue();
-		}catch(Exception e) 
-		{
-			Log.e("DIALOG", "error:  " + "FAIL TO GET PARAMETER VALUE");
-		}
-		return parameterValue;
-	}*/
-	
 
 	@SimpleEvent
-	public void OnAnalizeResponse(String action, String query, List<List<String>> params) {
+	public void OnAnalizeResponse(String action, String query, List<List<Object>> params) {
 		EventDispatcher.dispatchEvent(this, "OnAnalizeResponse", action, query, params);
 
 	}
-	@SimpleEvent
-	public void OnFinishListening(String response) {
-		EventDispatcher.dispatchEvent(this, "OnFinishListening",response);
-		isListening=false;
 
-	}
-
-	@SimpleEvent
-	public void OnErrorListening(String errorType) {
-
-		EventDispatcher.dispatchEvent(this, "OnErrorListening",errorType);
-		isListening=false;
-
-	}
 	@SimpleEvent
 	public void OnErrorAnalyzing(String errorMessage) {
 
-		EventDispatcher.dispatchEvent(this, "OnErrorAnalize",errorMessage);
+		EventDispatcher.dispatchEvent(this, "OnErrorAnalyzing",errorMessage);
 
 	}
 	@RequiresApi(api = Build.VERSION_CODES.CUPCAKE)

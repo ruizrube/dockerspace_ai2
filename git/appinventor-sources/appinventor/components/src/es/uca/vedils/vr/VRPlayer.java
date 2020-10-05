@@ -234,7 +234,7 @@ public class VRPlayer extends AndroidNonvisibleComponent implements Component, A
     @SimpleProperty
     public void VideoURL(String url) {
 
-        //TODO AQUI ESTA LA MANTECA, FALLA EN LA SEGUNDA VUELTA
+
 
         Log.e("VRPLAYER", "ISOPENED:  " + isOpened);
         isLocalVideo = false;

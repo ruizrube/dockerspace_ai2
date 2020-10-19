@@ -169,6 +169,10 @@ public final class SimpleComponentDescriptor {
     bundledImages.put("images/vrplayer.png", images.vrplayer());
     bundledImages.put("images/workflow.png", images.workflow());
     bundledImages.put("images/dialog.png", images.dialog());
+    bundledImages.put("images/user.png", images.user());
+    bundledImages.put("images/tracker.png", images.tracker());
+    
+    
 
     imagesInitialized = true;
   }

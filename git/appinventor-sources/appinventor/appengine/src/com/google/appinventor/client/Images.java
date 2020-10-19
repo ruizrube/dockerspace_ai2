@@ -606,5 +606,13 @@ public interface Images extends Resources {
 
   @Source("com/google/appinventor/images/dialog.png")
   ImageResource dialog();
+  
+  @Source("com/google/appinventor/images/user.png")
+  ImageResource user();
+
+  
+  @Source("com/google/appinventor/images/tracker.png")
+  ImageResource tracker();
+
 
 }

@@ -6,6 +6,20 @@ public class PlayerResponse {
 	private StreamingData streamingData;
 	private YoutubeMeta videoDetails;
 	private Captions captions;
+	private String playerJs;
+
+	public void setPlayerJs(String playerJs){
+		this.playerJs = playerJs;
+	}
+
+	public String getPlayerJs(){
+		if( playerJs.startsWith("http") && playerJs.contains("youtube.com") ){
+			return playerJs.replace("\\", "");
+		}
+		else{
+			return "https://www.youtube.com" + playerJs.replace("\\", "");
+		}
+	}
 
 	public void setCaptions(Captions captions) {
 		this.captions = captions;
@@ -21,7 +35,7 @@ public class PlayerResponse {
 	public PlayabilityStatus getPlayabilityStatus() {
 		return playabilityStatus;
 	}
-	
+
 	public void setStreamingData(StreamingData streamingData) {
 		this.streamingData = streamingData;
 	}
@@ -37,10 +51,10 @@ public class PlayerResponse {
 	public YoutubeMeta getVideoDetails() {
 		return videoDetails;
 	}
-	
-	
-	
-	
+
+
+
+
 
 	public class Captions{
 		private PlayerCaptionsTracklistRenderer playerCaptionsTracklistRenderer;
@@ -53,13 +67,13 @@ public class PlayerResponse {
 			return playerCaptionsTracklistRenderer;
 		}
 
-		
-		
+
+
 		public class PlayerCaptionsTracklistRenderer{
 			private List<YTSubtitles> captionTracks;
 
 
-			
+
 			public void setCaptionTracks(List<YTSubtitles> captionTracks) {
 				this.captionTracks = captionTracks;
 			}
@@ -71,7 +85,7 @@ public class PlayerResponse {
 	}
 
 
-	
+
 	public class PlayabilityStatus{
 		private String status;
 		private boolean playableInEmbed;
@@ -93,5 +107,6 @@ public class PlayerResponse {
 		}
 	}
 }
+
 
 
